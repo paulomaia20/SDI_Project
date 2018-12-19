@@ -1,4 +1,4 @@
-// The Nature of Code
+// The Nature of Code //<>//
 // Daniel Shiffman
 // http://natureofcode.com
 
@@ -8,11 +8,14 @@ class ParticleSystem {
   ArrayList<Particle> particles;
   PVector origin;
   Cursor c;
+  User myUser;
 
-  ParticleSystem(PVector position) {
+  ParticleSystem(PVector position, User muser) {
     origin = position.get();
     particles = new ArrayList<Particle>();
     c = new Cursor();
+        myUser=muser;
+
   }
 
   void addParticle() {
@@ -22,19 +25,19 @@ class ParticleSystem {
   void addParticle(float x, float y) {
     particles.add(new Particle(new PVector(x, y)));
   }
-  
+
   Particle getParticle(int i) {
     Particle p = particles.get(i);
-    return p; 
+    return p;
   }
-  
-    ArrayList<Particle> getParticleList() {
-    return this.particles; 
+
+  ArrayList<Particle> getParticleList() {
+    return this.particles;
   }
-  
+
   int getNrParticles() {
     int nParticles = particles.size();
-    return nParticles; 
+    return nParticles;
   }
 
   void run() {
@@ -43,13 +46,13 @@ class ParticleSystem {
     for (int i = particles.size()-1; i >= 0; i--) {
       Particle p = particles.get(i);
       p.run();
+       if (p.touchedParticle){
+        p.touchedParticle=false;
+        (myUser.getColoursStatistics())[p.index_colour]++;
+      }        
       if (p.isDead()) {
-        particles.remove(i); //<>//
+        particles.remove(i);
       }
-    }    
+    }
   }
-  
-
-  
-  
 }
