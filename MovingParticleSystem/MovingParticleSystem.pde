@@ -20,6 +20,8 @@ int state = stateWaitBeforeProgram;
 User newUser;
 int id_user=1;
 
+PrintWriter output;
+
 void setup() {
   fullScreen();
   //size(640, 480);
@@ -42,6 +44,9 @@ void setup() {
   svg2.disableStyle();   
 
   svg2.setFill(color(0, 0, 0));
+  
+  // create a file in the sketch directory
+  output = createWriter("statistics_user" + id_user +".txt");
 }
 
 void draw() {
@@ -96,8 +101,8 @@ void draw() {
 
     // }
 
-    if (elapsed_time>5)
-    {
+    if (elapsed_time>5) {
+         
       state=stateWaitAfterProgram; 
       background(255);
       textSize(40);
@@ -129,15 +134,31 @@ void draw() {
       text(newUser.getColoursStatistics()[5], width/2+width/6, height/2-height/4-100);
 
       text("Partículas cinzentas:", width/2, height/2-height/4-120);
-      text(newUser.getColoursStatistics()[6], width/2+width/6, height/2-height/4-120);
+      text(newUser.getColoursStatistics()[6], width/2+width/6, height/2-height/4-120);   
+      
+      write("Moving Particle System Statistics");
+      output.println("Partículas vermelhas: " + (newUser.getColoursStatistics()[0]));
+      output.println("Partículas amarelas: " + (newUser.getColoursStatistics()[1]));
+      output.println("Partículas laranjas: " + (newUser.getColoursStatistics()[2]));
+      output.println("Partículas verdes: "+ (newUser.getColoursStatistics()[3])); 
+      output.println("Partículas azuis: " + (newUser.getColoursStatistics()[4]));  
+      output.println("Partículas roxas: " + (newUser.getColoursStatistics()[5]));
+      output.println("Partículas cinzentas: " + (newUser.getColoursStatistics()[6]));
+      
+      // finish writing data to the file
+      output.flush();  
+      output.close();
       
       //Restart and give a new score
       id_user++; 
       setup(); 
     }
-  }
+  }  
 }
 
+void write(String str) {
+  output.println(str);
+}
 
 void mousePressed() {
 
@@ -145,7 +166,7 @@ void mousePressed() {
     state=stateNormalProgram ;
     timeClicked=millis();
   }
-
+  
 
   if (state == stateWaitAfterProgram) {
     state=stateNormalProgram ;
