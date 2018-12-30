@@ -1,11 +1,11 @@
-/*               R    G    B
- [0] vermelho  255  1    1
- [1] amarelo   255  225  30
- [2] laranja   255  175  15
- [3] verde     0    204  0
- [4] azul      51   204  204
- [5] roxo      190  116  202
- [6] cinzento  160  160  160
+/*              R    G    B
+ [0] red       239  51   64
+ [1] yellow    243  207  85
+ [2] orange    255  108  47
+ [3] green     136  176  75
+ [4] blue      87   140  169
+ [5] purple    173  94   153
+ [6] grey      129  131  135
  */
 
 class User {

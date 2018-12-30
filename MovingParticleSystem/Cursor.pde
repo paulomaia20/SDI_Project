@@ -2,8 +2,8 @@ class Cursor {
   int xposition;
   int yposition; 
 
-  Cursor() {
-  }
+  //Cursor() {
+  //}
 
   // Method to display
   void display() {

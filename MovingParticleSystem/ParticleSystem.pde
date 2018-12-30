@@ -2,8 +2,6 @@
 // Daniel Shiffman
 // http://natureofcode.com
 
-// Using Generics now!  comment and annotate, etc.
-
 class ParticleSystem {
   ArrayList<Particle> particles;
   PVector origin;
@@ -11,7 +9,7 @@ class ParticleSystem {
   User myUser;
 
   ParticleSystem(PVector position, User muser) {
-    origin = position.get();
+    origin = position.copy();
     particles = new ArrayList<Particle>();
     c = new Cursor();
         myUser=muser;

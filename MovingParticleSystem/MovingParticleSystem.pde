@@ -50,6 +50,10 @@ void setup() {
 }
 
 void draw() {
+  
+  int s = second();  // Values from 0 - 59
+  int m = minute();  // Values from 0 - 59
+  int h = hour();    // Values from 0 - 23
 
   if (state == stateWaitBeforeProgram) {
     background(255);
@@ -105,14 +109,15 @@ void draw() {
          
       state=stateWaitAfterProgram; 
       background(255);
-      textSize(40);
-
+      
+      textSize(50);
       fill(0);
-
       textAlign(CENTER, CENTER);
       text("O jogo terminou", width/2, height/2);
+      textSize(15);
+      text("Carrega no rato para iniciar novamente.", width/2, height/2+75);
+      
       textAlign(LEFT, LEFT);
-
       textSize(20);
       // Mostrar estatísticas do utilizador
       text("Partículas vermelhas:", width/2, height/2-height/4);
@@ -134,16 +139,22 @@ void draw() {
       text(newUser.getColoursStatistics()[5], width/2+width/6, height/2-height/4-100);
 
       text("Partículas cinzentas:", width/2, height/2-height/4-120);
-      text(newUser.getColoursStatistics()[6], width/2+width/6, height/2-height/4-120);   
+      text(newUser.getColoursStatistics()[6], width/2+width/6, height/2-height/4-120);
       
-      write("Moving Particle System Statistics");
-      output.println("Partículas vermelhas: " + (newUser.getColoursStatistics()[0]));
-      output.println("Partículas amarelas: " + (newUser.getColoursStatistics()[1]));
-      output.println("Partículas laranjas: " + (newUser.getColoursStatistics()[2]));
-      output.println("Partículas verdes: "+ (newUser.getColoursStatistics()[3])); 
-      output.println("Partículas azuis: " + (newUser.getColoursStatistics()[4]));  
-      output.println("Partículas roxas: " + (newUser.getColoursStatistics()[5]));
-      output.println("Partículas cinzentas: " + (newUser.getColoursStatistics()[6]));
+      String formatStr = "%-25s %-15s";
+      
+      write("======= estatísticas =======");
+      write("\n");
+      write("id " + id_user);
+      write("início às " + h + ":" + m + ":" + s);
+      write("\n");
+      output.println(String.format(formatStr, "partículas vermelhas", (newUser.getColoursStatistics()[0])));
+      output.println(String.format(formatStr, "partículas amarelas", (newUser.getColoursStatistics()[1])));
+      output.println(String.format(formatStr, "partículas laranjas", (newUser.getColoursStatistics()[2])));
+      output.println(String.format(formatStr, "partículas verdes", (newUser.getColoursStatistics()[3])));
+      output.println(String.format(formatStr, "partículas azuis", (newUser.getColoursStatistics()[4])));
+      output.println(String.format(formatStr, "partículas roxas", (newUser.getColoursStatistics()[5])));
+      output.println(String.format(formatStr, "partículas cinzentas", (newUser.getColoursStatistics()[6])));
       
       // finish writing data to the file
       output.flush();  
