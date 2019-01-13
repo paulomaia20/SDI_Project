@@ -1,10 +1,14 @@
+import kinect4WinSDK.Kinect;
+import kinect4WinSDK.SkeletonData;
+
 class Cursor {
   int xposition;
   int yposition; 
 
   Cursor() {
   }
-
+  
+  
   // Method to display
   void display() {
     stroke(255);
@@ -13,13 +17,14 @@ class Cursor {
     ellipse(xposition, yposition, 10, 10);
   }
 
-  void update() {
-    xposition=mouseX;
-    yposition=mouseY;
+  void update(int xpos, int ypos) {
+    xposition=xpos;
+    yposition=ypos;
   }
 
-  void run() {
-    update();
+  void run(int xpos, int ypos) {
+    update(xpos, ypos);
     display();
   }
+  
 }
