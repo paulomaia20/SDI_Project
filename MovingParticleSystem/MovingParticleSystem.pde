@@ -20,6 +20,7 @@ int state = stateWaitBeforeProgram;
 User newUser;
 int id_user=1;
 
+bouncyWord title;
 PrintWriter output;
 
 void setup() {
@@ -30,6 +31,8 @@ void setup() {
   //opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);
   // video.start();
   /*TER AQUI UMA FUNÇÃO PARA IR BUSCAR O ÚLTIMO USER AO TXT*/
+  
+  title = new bouncyWord("Raindrop", width/2);
 
   newUser= new User(id_user);
   ps = new ParticleSystem(new PVector(width/2, 50), newUser);
@@ -46,7 +49,8 @@ void setup() {
   svg2.setFill(color(0, 0, 0));
   
   // create a file in the sketch directory
-  output = createWriter("statistics_user" + id_user +".txt");
+  int d = day();     // Values from 1 - 31
+  output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
 }
 
 void draw() {
@@ -57,6 +61,12 @@ void draw() {
 
   if (state == stateWaitBeforeProgram) {
     background(255);
+  
+    textAlign(CENTER);
+    textSize(50);
+    title.draw();
+    fill(0);   
+    
     textSize(20);
     textAlign(CENTER, CENTER);
     text ("Carrega no rato para iniciar o jogo", width/2, height/2);
@@ -92,20 +102,18 @@ void draw() {
      mouseY = (faces[i].y+height/8);
      } */
 
-
     ps.origin.set(random(0, 2000), 0, 0);  
     ps.addParticle();
     ps.run(); 
 
     textSize(20);
-    textAlign(RIGHT, TOP);
-    //text ("Elapsed time", width/2, height/2);
+    textAlign(CENTER, TOP);
     elapsed_time=(millis()-timeClicked)/1000;
-    text (elapsed_time, width/2, 0);
+    text(elapsed_time, width/2, 0);
 
     // }
 
-    if (elapsed_time>5) {
+    if (elapsed_time>=10) {
          
       state=stateWaitAfterProgram; 
       background(255);
@@ -119,32 +127,33 @@ void draw() {
       
       textAlign(LEFT, LEFT);
       textSize(20);
+      text("Tempo de jogo:", width/2-width/12, height/2-height/4-140);
+      text(elapsed_time, width/2+width/12, height/2-height/4-140);
+      
       // Mostrar estatísticas do utilizador
-      text("Partículas vermelhas:", width/2, height/2-height/4);
-      text(newUser.getColoursStatistics()[0], width/2+width/6, height/2-height/4);
+      text("Partículas vermelhas:", width/2-width/12, height/2-height/4);
+      text(newUser.getColoursStatistics()[0], width/2+width/12, height/2-height/4);
 
-      text("Partículas amarelas:", width/2, height/2-height/4-20);
-      text(newUser.getColoursStatistics()[1], width/2+width/6, height/2-height/4-20);
+      text("Partículas amarelas:", width/2-width/12, height/2-height/4-20);
+      text(newUser.getColoursStatistics()[1], width/2+width/12, height/2-height/4-20);
 
-      text("Partículas laranjas:", width/2, height/2-height/4-40);
-      text(newUser.getColoursStatistics()[2], width/2+width/6, height/2-height/4-40);
+      text("Partículas laranjas:", width/2-width/12, height/2-height/4-40);
+      text(newUser.getColoursStatistics()[2], width/2+width/12, height/2-height/4-40);
 
-      text("Partículas verdes:", width/2, height/2-height/4-60);
-      text(newUser.getColoursStatistics()[3], width/2+width/6, height/2-height/4-60);
+      text("Partículas verdes:", width/2-width/12, height/2-height/4-60);
+      text(newUser.getColoursStatistics()[3], width/2+width/12, height/2-height/4-60);
 
-      text("Partículas azuis:", width/2, height/2-height/4-80);
-      text(newUser.getColoursStatistics()[4], width/2+width/6, height/2-height/4-80);
+      text("Partículas azuis:", width/2-width/12, height/2-height/4-80);
+      text(newUser.getColoursStatistics()[4], width/2+width/12, height/2-height/4-80);
 
-      text("Partículas roxas:", width/2, height/2-height/4-100);
-      text(newUser.getColoursStatistics()[5], width/2+width/6, height/2-height/4-100);
+      text("Partículas roxas:", width/2-width/12, height/2-height/4-100);
+      text(newUser.getColoursStatistics()[5], width/2+width/12, height/2-height/4-100);
 
-      text("Partículas cinzentas:", width/2, height/2-height/4-120);
-      text(newUser.getColoursStatistics()[6], width/2+width/6, height/2-height/4-120);
+      text("Partículas cinzentas:", width/2-width/12, height/2-height/4-120);
+      text(newUser.getColoursStatistics()[6], width/2+width/12, height/2-height/4-120);
       
       String formatStr = "%-25s %-15s";
       
-      write("======= estatísticas =======");
-      write("\n");
       write("id " + id_user);
       write("início às " + h + ":" + m + ":" + s);
       write("\n");
