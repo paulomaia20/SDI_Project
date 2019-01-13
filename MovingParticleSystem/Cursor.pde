@@ -7,8 +7,8 @@ class Cursor {
 
   Cursor() {
   }
-  
-  
+
+
   // Method to display
   void display() {
     stroke(255);
@@ -26,5 +26,4 @@ class Cursor {
     update(xpos, ypos);
     display();
   }
-  
 }

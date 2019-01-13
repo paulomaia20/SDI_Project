@@ -25,6 +25,7 @@ User newUser;
 int id_user=1;
 ArrayList <SkeletonData> bodies;
 
+bouncyWord title;
 PrintWriter output;
 
 void setup() {
@@ -35,7 +36,9 @@ void setup() {
   //opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);
   // video.start();
   /*TER AQUI UMA FUNÇÃO PARA IR BUSCAR O ÚLTIMO USER AO TXT*/
-  
+
+  title = new bouncyWord("Raindrop", width/2);
+
   newUser= new User(id_user);
   ps = new ParticleSystem(new PVector(width/2, 50), newUser);  
   kinect = new Kinect(this);
@@ -53,39 +56,43 @@ void setup() {
   svg2.disableStyle();   
 
   svg2.setFill(color(0, 0, 0));
-  
+
   // create a file in the sketch directory
-  output = createWriter("statistics_user" + id_user +".txt");
+  int d = day();     // Values from 1 - 31
+  output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
 }
 
 void draw() {
 
+  int s = second();  // Values from 0 - 59
+  int m = minute();  // Values from 0 - 59
+  int h = hour();    // Values from 0 - 23
+
   if (state == stateWaitBeforeProgram) {
     background(255);
+
+    textAlign(CENTER);
+    textSize(50);
+    title.draw();
+    fill(0);   
+
     textSize(20);
     textAlign(CENTER, CENTER);
     text ("Carrega no rato para iniciar o jogo", width/2, height/2);
     //c.run(mouseX, mouseY);
-    
-   
-      for (int i=0; i<bodies.size (); i++) 
-    {
-    
-   c.run(int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width), int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height));
-   // print("x");
-    println(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_LEFT].x);
-    //print("y"); 
-        println(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_LEFT].y);
 
-  }
-  
+
+    for (int i=0; i<bodies.size (); i++) 
+    {
+      c.run(int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width), int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height));
+    }
   } else if (state==stateNormalProgram) {
     background(255);
     //translate(video.width,5);
     //scale(-1,1);
     /*  svg.disableStyle();
-         
-
+     
+     
      svg.setFill(color(random(255))); 
      svg.setStroke(color(255,255,20));
      shape(svg,width/2,height/2,width/2,height/2);
@@ -95,10 +102,10 @@ void draw() {
     //   shape(svg,mouseX,mouseY, width/16, height/8);
     fill(0);  //mudar para cor da partícula apanhada ?? pensar melhor ! 
     shape(svg2, width-width/12, height-height/8, width/16, height/8);
-     
-     c.run(mouseX,mouseY);
- 
-  
+
+    c.run(mouseX, mouseY);
+
+
     /* opencv.loadImage(video);
      
      noFill();
@@ -113,72 +120,78 @@ void draw() {
      mouseY = (faces[i].y+height/8);
      } */
 
-
     ps.origin.set(random(0, 2000), 0, 0);  
     ps.addParticle();
     ps.run(); 
 
     textSize(20);
-    textAlign(RIGHT, TOP);
-    //text ("Elapsed time", width/2, height/2);
+    textAlign(CENTER, TOP);
     elapsed_time=(millis()-timeClicked)/1000;
-    text (elapsed_time, width/2, 0);
+    text(elapsed_time, width/2, 0);
 
     // }
 
     if (elapsed_time>155) {
-         
+
       state=stateWaitAfterProgram; 
       background(255);
-      textSize(40);
 
+      textSize(50);
       fill(0);
-
       textAlign(CENTER, CENTER);
       text("O jogo terminou", width/2, height/2);
+      textSize(15);
+      text("Carrega no rato para iniciar novamente.", width/2, height/2+75);
+
       textAlign(LEFT, LEFT);
-
       textSize(20);
+      text("Tempo de jogo:", width/2-width/12, height/2-height/4-140);
+      text(elapsed_time, width/2+width/12, height/2-height/4-140);
+
       // Mostrar estatísticas do utilizador
-      text("Partículas vermelhas:", width/2, height/2-height/4);
-      text(newUser.getColoursStatistics()[0], width/2+width/6, height/2-height/4);
+      text("Partículas vermelhas:", width/2-width/12, height/2-height/4);
+      text(newUser.getColoursStatistics()[0], width/2+width/12, height/2-height/4);
 
-      text("Partículas amarelas:", width/2, height/2-height/4-20);
-      text(newUser.getColoursStatistics()[1], width/2+width/6, height/2-height/4-20);
+      text("Partículas amarelas:", width/2-width/12, height/2-height/4-20);
+      text(newUser.getColoursStatistics()[1], width/2+width/12, height/2-height/4-20);
 
-      text("Partículas laranjas:", width/2, height/2-height/4-40);
-      text(newUser.getColoursStatistics()[2], width/2+width/6, height/2-height/4-40);
+      text("Partículas laranjas:", width/2-width/12, height/2-height/4-40);
+      text(newUser.getColoursStatistics()[2], width/2+width/12, height/2-height/4-40);
 
-      text("Partículas verdes:", width/2, height/2-height/4-60);
-      text(newUser.getColoursStatistics()[3], width/2+width/6, height/2-height/4-60);
+      text("Partículas verdes:", width/2-width/12, height/2-height/4-60);
+      text(newUser.getColoursStatistics()[3], width/2+width/12, height/2-height/4-60);
 
-      text("Partículas azuis:", width/2, height/2-height/4-80);
-      text(newUser.getColoursStatistics()[4], width/2+width/6, height/2-height/4-80);
+      text("Partículas azuis:", width/2-width/12, height/2-height/4-80);
+      text(newUser.getColoursStatistics()[4], width/2+width/12, height/2-height/4-80);
 
-      text("Partículas roxas:", width/2, height/2-height/4-100);
-      text(newUser.getColoursStatistics()[5], width/2+width/6, height/2-height/4-100);
+      text("Partículas roxas:", width/2-width/12, height/2-height/4-100);
+      text(newUser.getColoursStatistics()[5], width/2+width/12, height/2-height/4-100);
 
-      text("Partículas cinzentas:", width/2, height/2-height/4-120);
-      text(newUser.getColoursStatistics()[6], width/2+width/6, height/2-height/4-120);   
-      
-      write("Moving Particle System Statistics");
-      output.println("Partículas vermelhas: " + (newUser.getColoursStatistics()[0]));
-      output.println("Partículas amarelas: " + (newUser.getColoursStatistics()[1]));
-      output.println("Partículas laranjas: " + (newUser.getColoursStatistics()[2]));
-      output.println("Partículas verdes: "+ (newUser.getColoursStatistics()[3])); 
-      output.println("Partículas azuis: " + (newUser.getColoursStatistics()[4]));  
-      output.println("Partículas roxas: " + (newUser.getColoursStatistics()[5]));
-      output.println("Partículas cinzentas: " + (newUser.getColoursStatistics()[6]));
-      
+      text("Partículas cinzentas:", width/2-width/12, height/2-height/4-120);
+      text(newUser.getColoursStatistics()[6], width/2+width/12, height/2-height/4-120);
+
+      String formatStr = "%-25s %-15s";
+
+      write("id " + id_user);
+      write("início às " + h + ":" + m + ":" + s);
+      write("\n");
+      output.println(String.format(formatStr, "partículas vermelhas", (newUser.getColoursStatistics()[0])));
+      output.println(String.format(formatStr, "partículas amarelas", (newUser.getColoursStatistics()[1])));
+      output.println(String.format(formatStr, "partículas laranjas", (newUser.getColoursStatistics()[2])));
+      output.println(String.format(formatStr, "partículas verdes", (newUser.getColoursStatistics()[3])));
+      output.println(String.format(formatStr, "partículas azuis", (newUser.getColoursStatistics()[4])));
+      output.println(String.format(formatStr, "partículas roxas", (newUser.getColoursStatistics()[5])));
+      output.println(String.format(formatStr, "partículas cinzentas", (newUser.getColoursStatistics()[6])));
+
       // finish writing data to the file
       output.flush();  
       output.close();
-      
+
       //Restart and give a new score
       id_user++; 
-     // setup(); 
+      // setup();
     }
-  }  
+  }
 }
 
 void write(String str) {
@@ -191,7 +204,7 @@ void mousePressed() {
     state=stateNormalProgram ;
     timeClicked=millis();
   }
-  
+
 
   if (state == stateWaitAfterProgram) {
     state=stateNormalProgram ;
@@ -219,79 +232,79 @@ void drawSkeleton(SkeletonData _s)
 {
   // Body
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_HEAD, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_CENTER);
+    Kinect.NUI_SKELETON_POSITION_HEAD, 
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_CENTER);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_CENTER, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_LEFT);
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_CENTER, 
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_LEFT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_CENTER, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_CENTER, 
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_RIGHT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_CENTER, 
-  Kinect.NUI_SKELETON_POSITION_SPINE);
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_CENTER, 
+    Kinect.NUI_SKELETON_POSITION_SPINE);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_LEFT, 
-  Kinect.NUI_SKELETON_POSITION_SPINE);
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_LEFT, 
+    Kinect.NUI_SKELETON_POSITION_SPINE);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_RIGHT, 
-  Kinect.NUI_SKELETON_POSITION_SPINE);
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_RIGHT, 
+    Kinect.NUI_SKELETON_POSITION_SPINE);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_SPINE, 
-  Kinect.NUI_SKELETON_POSITION_HIP_CENTER);
+    Kinect.NUI_SKELETON_POSITION_SPINE, 
+    Kinect.NUI_SKELETON_POSITION_HIP_CENTER);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_HIP_CENTER, 
-  Kinect.NUI_SKELETON_POSITION_HIP_LEFT);
+    Kinect.NUI_SKELETON_POSITION_HIP_CENTER, 
+    Kinect.NUI_SKELETON_POSITION_HIP_LEFT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_HIP_CENTER, 
-  Kinect.NUI_SKELETON_POSITION_HIP_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_HIP_CENTER, 
+    Kinect.NUI_SKELETON_POSITION_HIP_RIGHT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_HIP_LEFT, 
-  Kinect.NUI_SKELETON_POSITION_HIP_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_HIP_LEFT, 
+    Kinect.NUI_SKELETON_POSITION_HIP_RIGHT);
 
   // Left Arm
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_LEFT, 
-  Kinect.NUI_SKELETON_POSITION_ELBOW_LEFT);
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_LEFT, 
+    Kinect.NUI_SKELETON_POSITION_ELBOW_LEFT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_ELBOW_LEFT, 
-  Kinect.NUI_SKELETON_POSITION_WRIST_LEFT);
+    Kinect.NUI_SKELETON_POSITION_ELBOW_LEFT, 
+    Kinect.NUI_SKELETON_POSITION_WRIST_LEFT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_WRIST_LEFT, 
-  Kinect.NUI_SKELETON_POSITION_HAND_LEFT);
+    Kinect.NUI_SKELETON_POSITION_WRIST_LEFT, 
+    Kinect.NUI_SKELETON_POSITION_HAND_LEFT);
 
   // Right Arm
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_SHOULDER_RIGHT, 
-  Kinect.NUI_SKELETON_POSITION_ELBOW_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_SHOULDER_RIGHT, 
+    Kinect.NUI_SKELETON_POSITION_ELBOW_RIGHT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_ELBOW_RIGHT, 
-  Kinect.NUI_SKELETON_POSITION_WRIST_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_ELBOW_RIGHT, 
+    Kinect.NUI_SKELETON_POSITION_WRIST_RIGHT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_WRIST_RIGHT, 
-  Kinect.NUI_SKELETON_POSITION_HAND_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_WRIST_RIGHT, 
+    Kinect.NUI_SKELETON_POSITION_HAND_RIGHT);
 
   // Left Leg
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_HIP_LEFT, 
-  Kinect.NUI_SKELETON_POSITION_KNEE_LEFT);
+    Kinect.NUI_SKELETON_POSITION_HIP_LEFT, 
+    Kinect.NUI_SKELETON_POSITION_KNEE_LEFT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_KNEE_LEFT, 
-  Kinect.NUI_SKELETON_POSITION_ANKLE_LEFT);
+    Kinect.NUI_SKELETON_POSITION_KNEE_LEFT, 
+    Kinect.NUI_SKELETON_POSITION_ANKLE_LEFT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_ANKLE_LEFT, 
-  Kinect.NUI_SKELETON_POSITION_FOOT_LEFT);
+    Kinect.NUI_SKELETON_POSITION_ANKLE_LEFT, 
+    Kinect.NUI_SKELETON_POSITION_FOOT_LEFT);
 
   // Right Leg
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_HIP_RIGHT, 
-  Kinect.NUI_SKELETON_POSITION_KNEE_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_HIP_RIGHT, 
+    Kinect.NUI_SKELETON_POSITION_KNEE_RIGHT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_KNEE_RIGHT, 
-  Kinect.NUI_SKELETON_POSITION_ANKLE_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_KNEE_RIGHT, 
+    Kinect.NUI_SKELETON_POSITION_ANKLE_RIGHT);
   DrawBone(_s, 
-  Kinect.NUI_SKELETON_POSITION_ANKLE_RIGHT, 
-  Kinect.NUI_SKELETON_POSITION_FOOT_RIGHT);
+    Kinect.NUI_SKELETON_POSITION_ANKLE_RIGHT, 
+    Kinect.NUI_SKELETON_POSITION_FOOT_RIGHT);
 }
 
 
@@ -302,9 +315,9 @@ void DrawBone(SkeletonData _s, int _j1, int _j2)
   if (_s.skeletonPositionTrackingState[_j1] != Kinect.NUI_SKELETON_POSITION_NOT_TRACKED &&
     _s.skeletonPositionTrackingState[_j2] != Kinect.NUI_SKELETON_POSITION_NOT_TRACKED) {
     line(_s.skeletonPositions[_j1].x*width/2, 
-    _s.skeletonPositions[_j1].y*height/2, 
-    _s.skeletonPositions[_j2].x*width/2, 
-    _s.skeletonPositions[_j2].y*height/2);
+      _s.skeletonPositions[_j1].y*height/2, 
+      _s.skeletonPositions[_j2].x*width/2, 
+      _s.skeletonPositions[_j2].y*height/2);
   }
 }
 

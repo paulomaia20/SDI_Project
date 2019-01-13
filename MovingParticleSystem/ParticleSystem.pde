@@ -14,8 +14,7 @@ class ParticleSystem {
     origin = position.get();
     particles = new ArrayList<Particle>();
     c = new Cursor();
-        myUser=muser;
-
+    myUser=muser;
   }
 
   void addParticle() {
@@ -41,12 +40,12 @@ class ParticleSystem {
   }
 
   void run() {
-  //  c.run();
+    //  c.run();
 
     for (int i = particles.size()-1; i >= 0; i--) {
       Particle p = particles.get(i);
       p.run();
-       if (p.touchedParticle){
+      if (p.touchedParticle) {
         p.touchedParticle=false;
         (myUser.getColoursStatistics())[p.index_colour]++;
       }        

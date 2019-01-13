@@ -3,16 +3,18 @@
 // http://natureofcode.com
 
 // Simple Particle System
-/*               R    G    B
- [0] vermelho  255  1    1
- [1] amarelo   255  225  30
- [2] laranja   255  175  15
- [3] verde     0    204  0
- [4] azul      51   204  204
- [5] roxo      190  116  202
- [6] cinzento  160  160  160
+/*              R    G    B
+ [0] red       239  51   64
+ [1] yellow    243  207  85
+ [2] orange    255  108  47
+ [3] green     136  176  75
+ [4] blue      87   140  169
+ [5] purple    173  94   153
+ [6] grey      129  131  135
  */
+
 class Particle {
+  //PShape drop;
   PVector position;
   PVector velocity;
   PVector acceleration;
@@ -23,24 +25,24 @@ class Particle {
   int time_particle = millis();
 
   //==========Colors definition================
-  color red=color(255, 1, 1);
-  color yellow=color(255, 225, 30);
-  color orange=color(255, 175, 15);
-  color green=color(0, 204, 0);
-  color blue=color(51, 204, 204);
-  color purple=color(190, 116, 202);
-  color grey=color(160, 160, 160);
+  color red=color(239, 51, 64);
+  color yellow=color(243, 207, 85);
+  color orange=color(255, 108, 47);
+  color green=color(136, 176, 75);
+  color blue=color(87, 140, 169);
+  color purple=color(173, 94, 153);
+  color grey=color(129, 131, 135);
 
-  color [] vectorColours = {red, orange, yellow, green, blue, purple, grey};
+  color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
   color filling;
   color thiscolor;
   int angle; 
 
   Particle(PVector l) {
+    //drop = loadShape("drop.svg");
     acceleration = new PVector(0, 0.05);
-    //velocity = new PVector(0,random(-600,5));
     velocity = new PVector(0, random(-500, 4));
-    position = l.get();
+    position = l.copy();
     lifespan = 99900.0;
     index_colour=int(random(0, 7));    
     filling=vectorColours[index_colour];
@@ -79,6 +81,7 @@ class Particle {
       touchedParticle=false;
     }
     ellipse(position.x, position.y, 15, 25);
+    //shape(drop, position.x, position.y, 40, 40);
   }
 
   // Is the particle still useful?
@@ -105,7 +108,6 @@ class Particle {
 
   void changeBackground()
   {
-
 
     background(filling, 0.1);
   }
