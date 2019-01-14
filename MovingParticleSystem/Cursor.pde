@@ -32,7 +32,7 @@ class Cursor {
     float distance = dist(xposition, yposition, p.x, p.y); 
 
     // Compare distance to sum of radii
-    if (distance < r + p.r) { 
+    if (distance < 2*r + p.r) { 
       return true;
     } else {
       return false;
