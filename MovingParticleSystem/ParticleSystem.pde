@@ -4,6 +4,7 @@
 
 // Using Generics now!  comment and annotate, etc.
 
+/*
 class ParticleSystem {
   ArrayList<Particle> particles;
   PVector origin;
@@ -54,4 +55,4 @@ class ParticleSystem {
       }
     }
   }
-}
+} */ 
