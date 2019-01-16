@@ -4,14 +4,14 @@ class Cursor {
   float r;    // radius
 
   Cursor(float tempR) {
-        r = tempR;
+    r = tempR;
   }
 
   // Method to display
   void display() {
-    stroke(255);
-    strokeWeight(0);
-    fill(color(128, 128, 128));
+    stroke(0);
+    strokeWeight(0.5);
+    fill(color(255, 255, 255));
     ellipse(xposition, yposition, r*2, r*2);
   }
 
@@ -24,8 +24,8 @@ class Cursor {
     update(xpos, ypos);
     display();
   }
-  
-    // A function that returns true or false based on
+
+  // A function that returns true or false based on
   // if the catcher intersects a raindrop
   boolean intersect(Particle p) {
     // Calculate distance

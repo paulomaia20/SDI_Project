@@ -22,5 +22,7 @@ class bouncyWord {
     }
 
     text(word, px, py);
+
+
   }
 }
