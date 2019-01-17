@@ -1,4 +1,4 @@
-import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>//
+import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
@@ -133,8 +133,11 @@ void draw() {
 
     if (noPlayTimer.isFinished() || finish_game) {
       state=stateWaitAfterProgram;
+      elapsed_time=(millis()-timeClicked)/1000;
+      
     }
   } else {
+    
     showStats(s, m, h);
 
 
