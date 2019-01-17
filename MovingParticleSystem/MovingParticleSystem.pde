@@ -52,7 +52,7 @@ void setup() {
   timer = new Timer(400);    // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
   timer.start();             // Starting the timer
 
-  flashTimer = new Timer(5000);
+  flashTimer = new Timer(5000); //time of the game
 
   //Hide the cursor
   noCursor();
@@ -98,10 +98,9 @@ void draw() {
     // shape(svg2, width-width/12, height-height/8, width/16, height/8);
 
     c.run(mouseX, mouseY);
-
-
+    
+    // Add more particles to the particle vector
     if (timer.isFinished()) {
-
       particles[totalParticles] = new Particle();
       // Increment totalParticles
       totalParticles ++ ;
@@ -113,22 +112,18 @@ void draw() {
     for (int i = 0; i < totalParticles; i++ ) {
       particles[i].update();
       particles[i].display();
-      if (particles[i].getCaughtState()==true   )
-      { 
+      if (particles[i].getCaughtState()==true){
         particles[i].updateOpacity();
-      }
-      if (c.intersect(particles[i])) {
-        particles[i].setCaughtState(true); 
-
         print(particles[i].getOpacity());
-        if (particles[i].getOpacity()<=150)
+        if ((particles[i].getOpacity()<=150) && (!particles[i].getTouchedOnce()))
         {
           particles[i].caught();
-                  print(particles[i].index_colour); 
-
+          print(particles[i].index_colour); 
           (newUser.getColoursStatistics())[particles[i].index_colour]++; //nao esta a contar bem... fora do loop conta mais que uma vez por particula
         }
       }
+      if (c.intersect(particles[i])) 
+         particles[i].setCaughtState(true);    
     }
 
     elapsed_time=(millis()-timeClicked)/1000; 

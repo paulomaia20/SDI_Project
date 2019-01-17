@@ -46,6 +46,7 @@ class Particle {
     index_colour=int(random(0, 7));    
     filling=vectorColours[index_colour];
     opacity=255;
+    touchedOnce=false;
   }
 
   void run() {
@@ -88,6 +89,9 @@ class Particle {
     return opacity;
   }
 
+  boolean getTouchedOnce(){
+    return touchedOnce;
+  }
   // Check if it hits the bottom
   boolean reachedBottom() {
     // If we go a little beyond the bottom
@@ -105,5 +109,6 @@ class Particle {
     speed = 0; 
     // Set the location to somewhere way off-screen
     y = -1000;
+    touchedOnce=true;
   }
 }
