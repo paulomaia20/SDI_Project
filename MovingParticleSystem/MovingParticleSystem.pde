@@ -23,6 +23,7 @@ PFont mono;
 PShape svg; 
 boolean vanishTransition=false; 
 boolean caughtState=false; 
+boolean touchedOnce=false; 
 
 void setup() {
   fullScreen();
@@ -70,7 +71,6 @@ void draw() {
     textSize(50);
     fill(0); 
     title.draw();
-
 
     textSize(20);
     textAlign(CENTER, CENTER);
@@ -120,14 +120,17 @@ void draw() {
       if (c.intersect(particles[i])) {
         particles[i].setCaughtState(true); 
 
-        if (particles[i].getOpacity()<=0)
+        print(particles[i].getOpacity());
+        if (particles[i].getOpacity()<=150)
         {
           particles[i].caught();
-          (newUser.getColoursStatistics())[particles[i].index_colour]++;
+                  print(particles[i].index_colour); 
+
+          (newUser.getColoursStatistics())[particles[i].index_colour]++; //nao esta a contar bem... fora do loop conta mais que uma vez por particula
         }
       }
     }
-    
+
     elapsed_time=(millis()-timeClicked)/1000; 
 
     if (elapsed_time>5) {
