@@ -119,8 +119,8 @@ void draw() {
         particles[i].display();
         if (particles[i].getCaughtState()==true){
           particles[i].updateOpacity();
-          //print(particles[i].getOpacity());
-          if ((particles[i].getOpacity()<=150) && (!particles[i].getTouchedOnce()))
+          println(particles[i].getOpacity());
+          if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce()))
           {
             particles[i].caught();
             //print(particles[i].index_colour); 
@@ -135,7 +135,7 @@ void draw() {
     //elapsed_time=(millis()-timeClicked)/1000; 
     //if (elapsed_time>5) {
       
-    if (noPlayTimer.isFinished()|| finish_game) {
+    if (noPlayTimer.isFinished() || finish_game) {
       state=stateWaitAfterProgram; 
       showStats(s, m, h);
 
@@ -143,6 +143,7 @@ void draw() {
       id_user++; 
       newUser = new User(id_user); 
       totalParticles = 0;
+      finish_game=false;
     }
   }
 } 
