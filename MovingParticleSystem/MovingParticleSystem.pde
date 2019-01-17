@@ -1,4 +1,4 @@
-import processing.video.*; //<>// //<>// //<>// //<>// //<>//
+import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>//
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
@@ -52,9 +52,9 @@ void setup() {
   output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
 
   particles = new Particle[TOTAL_PARTICLE];      // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
-  timer = new Timer(400);    // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
+  timer = new Timer(600);    // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
   timer.start();             // Starting the timer
-  
+
   noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop
   flashTimer = new Timer(5000);
   //Hide the cursor
@@ -97,9 +97,6 @@ void draw() {
   } else if (state==stateNormalProgram) {
 
     background(255);
-    //  shape(svg, width-width/12, height-height/8, width/16, height/8);
-    // fill(0);  //mudar para cor da partícula apanhada ?? pensar melhor ! 
-    // shape(svg2, width-width/12, height-height/8, width/16, height/8);
 
     c.run(mouseX, mouseY);
 
@@ -110,45 +107,60 @@ void draw() {
       totalParticles ++ ;     
       timer.start();
       if (totalParticles>=TOTAL_PARTICLE)
-        finish_game=true;   
+        finish_game=true;
     }
 
 
     // Move and display all drops
-    if(!finish_game){
+    if (!finish_game) {
       for (int i = 0; i < totalParticles; i++ ) {
         particles[i].update();
         particles[i].display();
-        if (particles[i].getCaughtState()==true){
+        if (particles[i].getCaughtState()==true) {
           particles[i].updateOpacity();
           println(particles[i].getOpacity());
           if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce()))
           {
             particles[i].caught();
-            //print(particles[i].index_colour); 
             noPlayTimer.start();
             (newUser.getColoursStatistics())[particles[i].index_colour]++;
           }
         }
         if (c.intersect(particles[i])) 
-          particles[i].setCaughtState(true);    
-        }
+          particles[i].setCaughtState(true);
+      }
     }
-    //elapsed_time=(millis()-timeClicked)/1000; 
-    //if (elapsed_time>5) {
-      
+
     if (noPlayTimer.isFinished() || finish_game) {
-      state=stateWaitAfterProgram; 
-      showStats(s, m, h);
+      state=stateWaitAfterProgram;
+    }
+  } else {
+    showStats(s, m, h);
+
+
+    // Place button
+    shape(svg, width/2-width/8, height/2+height/8, 250*2, 75*2);
+
+    //Check if cursor is over the button
+    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, mouseX, mouseY, 350, 100);
+
+    c.run(mouseX, mouseY);
+    if (restart)
+    {    
 
       //Restart and reset variables - user id and particles array 
       id_user++; 
       newUser = new User(id_user); 
       totalParticles = 0;
+      noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop
+      noPlayTimer.start();
+
       finish_game=false;
+      state=stateWaitBeforeProgram;
     }
   }
-} 
+}
+
 
 void showStats(int s, int m, int h)
 {
@@ -164,7 +176,7 @@ void showStats(int s, int m, int h)
   int ypos_particle_title=height/2; 
   int xpos_particle_title_amount=width/2+width/12;
   int ypos_particle_title_amount=height/2; 
-  
+
   textAlign(LEFT, LEFT);
   textSize(20);
   text("Tempo de jogo (s):", xpos_particle_title, ypos_particle_title-140);
@@ -238,20 +250,8 @@ boolean checkMouseHoverAction_afterEnd(int rectXPos, int rectYpos, int xpos, int
   return false;
 }
 
-void mousePressed() {
-
-  if (state == stateWaitAfterProgram) {
-    state=stateNormalProgram ;
-    timeClicked=millis(); 
-    //Reset variables!
-  }
-} 
-
-void captureEvent(Capture c) {
-  c.read();
-}
-
 // Kinect lib
+
 void drawPosition(SkeletonData _s) 
 {
   noStroke();
