@@ -10,6 +10,7 @@ Capture video;
 final int stateWaitBeforeProgram = 0;
 final int stateWaitAfterProgram = 2;
 final int stateNormalProgram = 1;
+final int TOTAL_PARTICLE=100;
 int state = stateWaitBeforeProgram;
 User newUser;
 int id_user=1;
@@ -17,7 +18,7 @@ ArrayList <SkeletonData> bodies;
 bouncyWord title;
 PrintWriter output;
 Particle[] particles;
-Timer timer, flashTimer;        // One timer object
+Timer timer, flashTimer, noPlayTimer;        // One timer object
 int totalParticles = 0; // totalDrops
 PFont mono;
 PShape svg; 
@@ -25,6 +26,7 @@ boolean vanishTransition=false;
 boolean caughtState=false; 
 boolean touchedOnce=false;
 boolean restart=false; 
+boolean finish_game;
 
 void setup() {
   fullScreen();
@@ -49,14 +51,15 @@ void setup() {
   int d = day();     // Values from 1 - 31
   output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
 
-  particles = new Particle[50];      // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
+  particles = new Particle[TOTAL_PARTICLE];      // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
   timer = new Timer(400);    // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
   timer.start();             // Starting the timer
-
-  flashTimer = new Timer(5000); //time of the game
-
+  
+  noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop
+  flashTimer = new Timer(5000);
   //Hide the cursor
   noCursor();
+  finish_game=false;
 }
 
 void draw() {
@@ -104,54 +107,45 @@ void draw() {
     if (timer.isFinished()) {
       particles[totalParticles] = new Particle();
       // Increment totalParticles
-      totalParticles ++ ;
+      totalParticles ++ ;     
       timer.start();
+      if (totalParticles>=TOTAL_PARTICLE)
+        finish_game=true;   
     }
 
 
     // Move and display all drops
-    for (int i = 0; i < totalParticles; i++ ) {
-      particles[i].update();
-      particles[i].display();
-      if (particles[i].getCaughtState()==true) {
-        particles[i].updateOpacity();
-        print(particles[i].getOpacity());
-        if ((particles[i].getOpacity()<=100) && (!particles[i].getTouchedOnce()))
-        {
-          particles[i].caught();
-          print(particles[i].getOpacity()); 
-          (newUser.getColoursStatistics())[particles[i].index_colour]++; //nao esta a contar bem... fora do loop conta mais que uma vez por particula
+    if(!finish_game){
+      for (int i = 0; i < totalParticles; i++ ) {
+        particles[i].update();
+        particles[i].display();
+        if (particles[i].getCaughtState()==true){
+          particles[i].updateOpacity();
+          println(particles[i].getOpacity());
+          if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce()))
+          {
+            particles[i].caught();
+            //print(particles[i].index_colour); 
+            noPlayTimer.start();
+            (newUser.getColoursStatistics())[particles[i].index_colour]++;
+          }
         }
-      }
-      if (c.intersect(particles[i])) 
-        particles[i].setCaughtState(true);
+        if (c.intersect(particles[i])) 
+          particles[i].setCaughtState(true);    
+        }
     }
-
-    elapsed_time=(millis()-timeClicked)/1000; 
-
-    if (elapsed_time>5) {
-
-      state=stateWaitAfterProgram;
-    }
-  } else {
-    showStats(s, m, h);
-    //SE NÃO TIVEREM ACESSO À KINECT:
-    fill(color(255, 255, 255));
-    c.run(mouseX, mouseY);
-
-    // Place button
-    shape(svg, width/2-width/8, height/2+height/8, 250*2, 75*2);
-
-    //Check if cursor is over the button
-    restart = checkMouseHoverAction_afterEnd(width/2-width/12, height/2, mouseX, mouseY, 350, 100);
-
-    if (restart)
-    {    
+    //elapsed_time=(millis()-timeClicked)/1000; 
+    //if (elapsed_time>5) {
+      
+    if (noPlayTimer.isFinished() || finish_game) {
+      state=stateWaitAfterProgram; 
+      showStats(s, m, h);
 
       //Restart and reset variables - user id and particles array 
       id_user++; 
       newUser = new User(id_user); 
       totalParticles = 0;
+      finish_game=false;
     }
   }
 } 
