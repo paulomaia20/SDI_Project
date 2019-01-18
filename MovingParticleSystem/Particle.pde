@@ -73,8 +73,7 @@ class Particle {
   }
 
   void updateOpacity() {
-    if(opacity>0)
-      opacity=opacity-(speed*2);
+    opacity=opacity-20;
   }
 
   void setCaughtState(boolean state) {
