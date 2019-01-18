@@ -137,7 +137,7 @@
 #X text 165 315 [4] blue;
 #X text 164 329 [5] purple;
 #X text 163 342 [6] grey;
-#X text 161 271;
+#X text 161 271 comment;
 #X obj 546 61 metro;
 #X obj 383 593 *~;
 #X obj 660 594 *~;

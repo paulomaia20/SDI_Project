@@ -1,13 +1,7 @@
-import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
-import oscP5.*;
-import netP5.*;
-  
-OscP5 oscP5;
-NetAddress dest;
-
 
 Kinect kinect;
 int timeClicked, elapsed_time;
@@ -33,16 +27,9 @@ boolean caughtState=false;
 boolean touchedOnce=false;
 boolean restart=false; 
 boolean finish_game;
+
 void setup() {
-  
-  size(960, 720);
-  
-  /* start oscP5, listening for incoming messages at port 9000 */
-  oscP5 = new OscP5(this,9000);
-  dest = new NetAddress("127.0.0.1",6448);
-
-
-  //fullScreen();
+  fullScreen();
 
   //Set standard font
   mono = createFont("FiraSans-Regular.ttf", 32);
@@ -125,23 +112,6 @@ void draw() {
 
 
     // Move and display all drops
-<<<<<<< HEAD
-<<<<<<< HEAD
-    for (int i = 0; i < totalParticles; i++ ) {
-      particles[i].update();
-      particles[i].display();
-      if (particles[i].getCaughtState()==true){
-        particles[i].updateOpacity();
-        print(particles[i].getOpacity());
-        if ((particles[i].getOpacity()<=150) && (!particles[i].getTouchedOnce()))
-        {
-          particles[i].caught();
-          print(particles[i].index_colour); 
-          (newUser.getColoursStatistics())[particles[i].index_colour]++; //nao esta a contar bem... fora do loop conta mais que uma vez por particula
-          sendOSC(particles[i].index_colour);
-=======
-=======
->>>>>>> d3731766c0256e7e5bc8f6f36d156da1c3b69126
     if (!finish_game) {
       for (int i = 0; i < totalParticles; i++ ) {
         particles[i].update();
@@ -155,10 +125,6 @@ void draw() {
             noPlayTimer.start();
             (newUser.getColoursStatistics())[particles[i].index_colour]++;
           }
-<<<<<<< HEAD
->>>>>>> d3731766c0256e7e5bc8f6f36d156da1c3b69126
-=======
->>>>>>> d3731766c0256e7e5bc8f6f36d156da1c3b69126
         }
         if (c.intersect(particles[i])) 
           particles[i].setCaughtState(true);
@@ -431,9 +397,3 @@ void moveEvent(SkeletonData _b, SkeletonData _a)
     }
   }
 }
-
-   void sendOSC(int particle_color) {
-    OscMessage msg = new OscMessage("/inputs");
-    msg.add((int)particle_color); 
-    oscP5.send(msg, dest);
-      }
