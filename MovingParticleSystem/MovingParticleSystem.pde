@@ -35,9 +35,11 @@ boolean touchedOnce=false;
 boolean restart=false; 
 boolean finish_game;
 int kinect_x_pos, kinect_y_pos;
+int thunderopacity=255; 
 
 int thunderNum1;
 int thunderNum2;
+Thunder thunders;
 
 //==========Colors definition================
 color red=color(239, 51, 64);
@@ -91,12 +93,12 @@ void setup() {
   showPlayButtonTimer = new Timer(0);  
   showPlayButtonTimer.start();
   noPlayTimer=new Timer(10000);
+  noPlayTimer.start(); 
   //Hide the cursor
   noCursor();
   finish_game=false;
   totalParticles= 0;
   totalThunders=0;
-  
 }
 
 void draw() {
@@ -118,21 +120,16 @@ void draw() {
   
   if (state == stateWaitBeforeProgram) {
     background(255);
-
     textAlign(CENTER);
     textSize(50);
     fill(0); 
     title.draw();
-
     textSize(20);
     textAlign(CENTER, CENTER);
     text ("Passa o cursor por cima do botão para iniciar o jogo", width/2, height/2+300);
-    
-
     // Place button
     shape(svg, width/2-width/8, height/2, 250*2, 75*2);
-
-    if(showPlayButtonTimer.isFinished()){
+    if(showPlayButtonTimer.isFinished()){  
     //Check if cursor is over the button
     checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2);
     fill(color(128,128,128));
@@ -140,38 +137,38 @@ void draw() {
 
     c.run(kinect_x_pos,kinect_y_pos);
     
-    for (int i=0; i<bodies.size (); i++)     
-     c.run(int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width), int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height));
-    
-    //SE NÃO TIVEREM ACESSO À KINECT:
-   fill(color(255, 255, 255));
-   c.run(mouseX, mouseY);
   } else if (state==stateNormalProgram) {
 
     background(255);
-
     c.run(kinect_x_pos,kinect_y_pos);
-
     // Add more particles to the particle vector
     if (timer.isFinished()) {
       particles[totalParticles] = new Particle();
       // Increment totalParticles
       totalParticles ++ ; 
       timer.start();
-      if (totalParticles % 10 == 0){
-      int thunderX=(int) random(width);
-      thunder(thunderX);
-      //thunder1(0, thunderX);
-      totalThunders ++; 
-      println(totalParticles);
 
+      int thunderX=(int) random(width);
+      thunders = new Thunder(thunderX); 
+
+      //thunder(thunderX);
+      totalThunders ++; 
       }
-      if (totalParticles>=TOTAL_PARTICLE){
+       
+     // println(totalParticles);
+    //   }
+      if (totalParticles>=TOTAL_PARTICLE)
         finish_game=true;
-      }
-    }
+      
+   
+    
+
+    
     // Move and display all drops
     if (!finish_game) {
+          
+      if (thunders!=null)
+        thunders.display(); 
 
       for (int i = 0; i < totalParticles; i++ ) {
         particles[i].update();
@@ -192,22 +189,24 @@ void draw() {
          
         
     }
-    
+    }
     if (noPlayTimer.isFinished() || finish_game) {
       state=stateWaitAfterProgram;
       elapsed_time=(millis()-timeClicked)/1000;
       println("Acabou");
     }
+    
   } else {
     
     showStats(s, m, h);
+        c.run(kinect_x_pos,kinect_y_pos);
+
     // Place button
     shape(svg, width/2-width/8, height/2+height/8, 250*2, 75*2);
 
     //Check if cursor is over the button
     restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, kinect_x_pos, kinect_y_pos, 350, 100);
 
-    c.run(kinect_x_pos,kinect_y_pos);
     if (restart)
     {    
       //Restart and reset variables - user id and particles array 
@@ -215,7 +214,7 @@ void draw() {
       newUser = new User(id_user); 
       totalParticles = 0;
       noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop      
-
+      noPlayTimer.start(); 
       finish_game=false;
       state=stateWaitBeforeProgram;
       showPlayButtonTimer.setTime(3000);
@@ -223,7 +222,7 @@ void draw() {
     }
   }
 }
-}
+
 
 
 void showStats(int s, int m, int h)
@@ -466,29 +465,14 @@ void sendOsc(int particle_color) {
   msg.add((float)particle_color); 
   oscP5.send(msg, dest);
     }
-    
 
-void thunder(int x){
-    int y=0;
-    int index_colour=int(random(0, 7));    
-    color filling=vectorColours[index_colour];    
-  
-    
-     while(y<height){//to bottom of screen
-     int endX = x + int(random(-4,4)); //x-value varies
-     int endY = y + 1;    //y just goes up
-     strokeWeight(2);//bolt is a little thicker than a line
-     stroke(filling); 
-     line(x,y,endX,endY);//draw a tiny segment
-     x = endX;  //then x and y are moved to the 
-     y = endY;  //end of the segment and so on
-  }
-}
-
-void thunder1(int depth, int x){
+/*void thunder1(int depth, int x){
   int index_colour=int(random(0, 7));    
   color filling=vectorColours[index_colour];  
+  print(depth);
   if (depth < 10) {
+          print("inside depth<10");
+
     strokeWeight(2);//bolt is a little thicker than a line
     stroke(filling); 
     line(0,0,0,height/10); // draw a line going down
@@ -497,6 +481,7 @@ void thunder1(int depth, int x){
       rotate(random(-0.5,0.5));  // random wiggle
  
       if (random(1.0) < 0.1){ // &nbsp;ing  
+      print("inside random");
         rotate(0.3); // rotate to the right
         scale(0.4); // scale down
         pushMatrix(); // now save the transform state
@@ -512,4 +497,4 @@ void thunder1(int depth, int x){
             }
     }
   }
-}
+} */ 
