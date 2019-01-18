@@ -33,9 +33,7 @@ boolean caughtState=false;
 boolean touchedOnce=false;
 boolean restart=false; 
 boolean finish_game;
-
 int particle_color;
-
 void setup() {
   
   size(960, 720);
@@ -129,6 +127,7 @@ void draw() {
 
     // Move and display all drops
 <<<<<<< HEAD
+<<<<<<< HEAD
     for (int i = 0; i < totalParticles; i++ ) {
       particles[i].update();
       particles[i].display();
@@ -142,6 +141,8 @@ void draw() {
           (newUser.getColoursStatistics())[particles[i].index_colour]++; //nao esta a contar bem... fora do loop conta mais que uma vez por particula
           sendOSC(particles[i].index_colour);
 =======
+=======
+>>>>>>> d3731766c0256e7e5bc8f6f36d156da1c3b69126
     if (!finish_game) {
       for (int i = 0; i < totalParticles; i++ ) {
         particles[i].update();
@@ -155,6 +156,9 @@ void draw() {
             noPlayTimer.start();
             (newUser.getColoursStatistics())[particles[i].index_colour]++;
           }
+<<<<<<< HEAD
+>>>>>>> d3731766c0256e7e5bc8f6f36d156da1c3b69126
+=======
 >>>>>>> d3731766c0256e7e5bc8f6f36d156da1c3b69126
         }
         if (c.intersect(particles[i])) 
