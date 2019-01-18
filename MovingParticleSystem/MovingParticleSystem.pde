@@ -33,6 +33,7 @@ boolean caughtState=false;
 boolean touchedOnce=false;
 boolean restart=false; 
 boolean finish_game;
+int kinect_x_pos, kinect_y_pos;
 
 void setup() {
   fullScreen();
@@ -79,6 +80,14 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
+  if (bodies.size()!=0)
+  {
+    kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
+    kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
+   // c.run(kinect_x_pos,kinect_y_pos);
+
+  }
+  
   if (state == stateWaitBeforeProgram) {
     background(255);
 
@@ -95,21 +104,24 @@ void draw() {
     shape(svg, width/2-width/8, height/2, 250*2, 75*2);
 
     //Check if cursor is over the button
-    checkMouseHoverAction(width/2-width/8, height/2, mouseX, mouseY, 250*2, 75*2);
+    checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2);
+    fill(color(128,128,128));
 
+       c.run(kinect_x_pos,kinect_y_pos);
+    
     /*for (int i=0; i<bodies.size (); i++) 
      {
      c.run(int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width), int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height));
-     }*/
+     }*/ 
 
     //SE NÃO TIVEREM ACESSO À KINECT:
-    fill(color(255, 255, 255));
-    c.run(mouseX, mouseY);
+   // fill(color(255, 255, 255));
+  //  c.run(mouseX, mouseY);
   } else if (state==stateNormalProgram) {
 
     background(255);
 
-    c.run(mouseX, mouseY);
+c.run(kinect_x_pos,kinect_y_pos);
 
     // Add more particles to the particle vector
     if (timer.isFinished()) {
@@ -157,10 +169,10 @@ void draw() {
     shape(svg, width/2-width/8, height/2+height/8, 250*2, 75*2);
 
     //Check if cursor is over the button
-    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, mouseX, mouseY, 350, 100);
+    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, kinect_x_pos, kinect_y_pos, 350, 100);
 
-    c.run(mouseX, mouseY);
-    if (restart)
+c.run(kinect_x_pos,kinect_y_pos);
+if (restart)
     {    
 
       //Restart and reset variables - user id and particles array 
