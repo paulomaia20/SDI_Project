@@ -11,7 +11,7 @@ NetAddress dest;
 final int RADIUS=20;
 
 Kinect kinect;
-int timeClicked, elapsed_time;
+int timeClicked, elapsed_time, elapsed_time1;
 Cursor c; 
 Capture video;
 final int stateWaitBeforeProgram = 0;
@@ -26,7 +26,7 @@ bouncyWord title;
 PrintWriter output;
 Particle[] particles;
 Timer timer, noPlayTimer, showPlayButtonTimer;        // One timer object
-int totalParticles;  // totalDrops
+int totalParticles,totalThunders;  // totalDrops
 PFont mono;
 PShape svg; 
 boolean vanishTransition=false; 
@@ -36,9 +36,26 @@ boolean restart=false;
 boolean finish_game;
 int kinect_x_pos, kinect_y_pos;
 
+int thunderNum1;
+int thunderNum2;
+
+//==========Colors definition================
+color red=color(239, 51, 64);
+color yellow=color(243, 207, 85);
+color orange=color(255, 108, 47);
+color green=color(136, 176, 75);
+color blue=color(87, 140, 169);
+color purple=color(173, 94, 153);
+color grey=color(129, 131, 135);
+
+color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
+
+
+
+
 void setup() {
-  size(600,800);
-  //fullScreen();
+  //size(600,800);
+  fullScreen();
   
   /* start oscP5, listening for incoming messages at port 9000 */
   oscP5 = new OscP5(this,9000);
@@ -78,6 +95,8 @@ void setup() {
   noCursor();
   finish_game=false;
   totalParticles= 0;
+  totalThunders=0;
+  
 }
 
 void draw() {
@@ -86,16 +105,16 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
- if (bodies.size()!=0) 
-  {
-    kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
-    kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
-    c.run(kinect_x_pos,kinect_y_pos);
-  }
+ //if (bodies.size()!=0) 
+ // {
+ //   kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
+ //   kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
+ //   c.run(kinect_x_pos,kinect_y_pos);
+ // }
   
   // IF KINECT IS NOT ON
-  //kinect_x_pos=mouseX;
-  //kinect_y_pos=mouseY; 
+  kinect_x_pos=mouseX;
+  kinect_y_pos=mouseY; 
   
   if (state == stateWaitBeforeProgram) {
     background(255);
@@ -125,8 +144,8 @@ void draw() {
      c.run(int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width), int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height));
     
     //SE NÃO TIVEREM ACESSO À KINECT:
-   //fill(color(255, 255, 255));
-   //c.run(mouseX, mouseY);
+   fill(color(255, 255, 255));
+   c.run(mouseX, mouseY);
   } else if (state==stateNormalProgram) {
 
     background(255);
@@ -137,14 +156,23 @@ void draw() {
     if (timer.isFinished()) {
       particles[totalParticles] = new Particle();
       // Increment totalParticles
-      totalParticles ++ ;     
+      totalParticles ++ ; 
       timer.start();
+      if (totalParticles % 10 == 0){
+      int thunderX=(int) random(width);
+      thunder(thunderX);
+      //thunder1(0, thunderX);
+      totalThunders ++; 
+      println(totalParticles);
+
+      }
       if (totalParticles>=TOTAL_PARTICLE){
         finish_game=true;
       }
     }
     // Move and display all drops
     if (!finish_game) {
+
       for (int i = 0; i < totalParticles; i++ ) {
         particles[i].update();
         particles[i].display();
@@ -161,8 +189,10 @@ void draw() {
         }
         if (c.intersect(particles[i])) 
           particles[i].setCaughtState(true);
-      }
+         
+        
     }
+    
     if (noPlayTimer.isFinished() || finish_game) {
       state=stateWaitAfterProgram;
       elapsed_time=(millis()-timeClicked)/1000;
@@ -192,6 +222,7 @@ void draw() {
       showPlayButtonTimer.start();
     }
   }
+}
 }
 
 
@@ -435,3 +466,50 @@ void sendOsc(int particle_color) {
   msg.add((float)particle_color); 
   oscP5.send(msg, dest);
     }
+    
+
+void thunder(int x){
+    int y=0;
+    int index_colour=int(random(0, 7));    
+    color filling=vectorColours[index_colour];    
+  
+    
+     while(y<height){//to bottom of screen
+     int endX = x + int(random(-4,4)); //x-value varies
+     int endY = y + 1;    //y just goes up
+     strokeWeight(2);//bolt is a little thicker than a line
+     stroke(filling); 
+     line(x,y,endX,endY);//draw a tiny segment
+     x = endX;  //then x and y are moved to the 
+     y = endY;  //end of the segment and so on
+  }
+}
+
+void thunder1(int depth, int x){
+  int index_colour=int(random(0, 7));    
+  color filling=vectorColours[index_colour];  
+  if (depth < 10) {
+    strokeWeight(2);//bolt is a little thicker than a line
+    stroke(filling); 
+    line(0,0,0,height/10); // draw a line going down
+    {
+      translate(0,height/10); // move the space downwards
+      rotate(random(-0.5,0.5));  // random wiggle
+ 
+      if (random(1.0) < 0.1){ // &nbsp;ing  
+        rotate(0.3); // rotate to the right
+        scale(0.4); // scale down
+        pushMatrix(); // now save the transform state
+        thunder(depth + 1); // start a new branch!
+        popMatrix(); // go back to saved state
+        rotate(-0.6); // rotate back to the left
+        pushMatrix(); // save state
+        thunder(depth + 2);   // start a second new branch
+        popMatrix(); // back to saved state        
+     }
+      else { // no branch - continue at the same depth  
+        thunder(depth);
+            }
+    }
+  }
+}

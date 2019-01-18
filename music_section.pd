@@ -9,7 +9,7 @@
 #X obj 239 472 tabwrite 100colors;
 #N canvas 0 50 450 250 (subpatch) 0;
 #X array 100colors 10 float 3;
-#A 0 1 1 2 5 3 2 4 4 2 2;
+#A 0 5 1 5 2 3 0 2 2 0 5;
 #X coords 0 7 10 -1 200 140 1 0 0;
 #X restore 36 449 graph;
 #X obj 307 360 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
@@ -18,26 +18,26 @@
 #X obj 365 193 soundfiler;
 #X floatatom 365 235 15 0 0 0 - - -;
 #N canvas 0 50 450 250 (subpatch) 0;
-#X array agressive 3.02413e+006 float 4;
-#X coords 0 1 3.02413e+006 -1 200 140 1;
+#X array agressive 3.024e+006 float 4;
+#X coords 0 1 3.024e+006 -1 200 140 1;
 #X restore 1339 18 graph;
 #X msg 658 161 read -resize canon_sad.wav sad;
 #X obj 658 193 soundfiler;
 #N canvas 0 50 450 250 (subpatch) 0;
-#X array sad 3.0681e+006 float 4;
-#X coords 0 1 3.0681e+006 -1 200 140 1;
+#X array sad 3.024e+006 float 4;
+#X coords 0 1 3.024e+006 -1 200 140 1;
 #X restore 1556 18 graph;
 #X obj 879 192 soundfiler;
 #X obj 1104 194 soundfiler;
 #N canvas 0 50 450 250 (subpatch) 0;
-#X array chill 3.02479e+006 float 4;
-#X coords 0 1 3.02479e+006 -1 200 140 1;
+#X array chill 3.024e+006 float 4;
+#X coords 0 1 3.024e+006 -1 200 140 1;
 #X restore 1339 184 graph;
 #X msg 879 163 read -resize canon_chill.wav chill;
 #X msg 1104 162 read -resize canon_happy.wav happy;
 #N canvas 0 50 450 250 (subpatch) 0;
-#X array happy 3.0681e+006 float 4;
-#X coords 0 1 3.0681e+006 -1 200 140 1;
+#X array happy 3.024e+006 float 4;
+#X coords 0 1 3.024e+006 -1 200 140 1;
 #X restore 1557 185 graph;
 #X obj 365 436 line~;
 #X obj 366 483 tabread~ agressive;
@@ -165,7 +165,6 @@
 -1;
 #X text 217 234 comment;
 #X obj 176 328 sel 777;
-#X obj 377 771 + 10;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 1 0 5 0;
@@ -233,7 +232,7 @@
 #X connect 67 0 76 0;
 #X connect 68 0 77 0;
 #X connect 69 0 75 0;
-#X connect 70 0 145 0;
+#X connect 70 0 79 0;
 #X connect 71 0 78 0;
 #X connect 72 0 73 0;
 #X connect 73 0 70 3;
@@ -320,4 +319,3 @@
 #X connect 144 0 72 0;
 #X connect 144 1 4 0;
 #X connect 144 1 9 0;
-#X connect 145 0 79 0;
