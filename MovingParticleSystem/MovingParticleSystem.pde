@@ -8,6 +8,7 @@ import netP5.*;
 OscP5 oscP5;
 NetAddress dest;
 
+final int RADIUS=20;
 
 Kinect kinect;
 int timeClicked, elapsed_time;
@@ -24,8 +25,8 @@ ArrayList <SkeletonData> bodies;
 bouncyWord title;
 PrintWriter output;
 Particle[] particles;
-Timer timer, flashTimer, noPlayTimer;        // One timer object
-int totalParticles = 0; // totalDrops
+Timer timer, noPlayTimer, showPlayButtonTimer;        // One timer object
+int totalParticles;  // totalDrops
 PFont mono;
 PShape svg; 
 boolean vanishTransition=false; 
@@ -33,6 +34,7 @@ boolean caughtState=false;
 boolean touchedOnce=false;
 boolean restart=false; 
 boolean finish_game;
+int kinect_x_pos, kinect_y_pos;
 
 void setup() {
   size(600,800);
@@ -55,7 +57,7 @@ void setup() {
   newUser= new User(id_user);
   kinect = new Kinect(this);
   bodies = new ArrayList<SkeletonData>();
-  c = new Cursor(12); //Cursor with radius 12 
+  c = new Cursor(RADIUS); //Cursor with radius 12 
 
   frameRate(120);
   smooth();
@@ -67,13 +69,15 @@ void setup() {
 
   particles = new Particle[TOTAL_PARTICLE];      // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
   timer = new Timer(600);    // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
-  timer.start();             // Starting the timer
 
-  noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop
-  flashTimer = new Timer(5000);
+   //timer to count the time since the last time the user caught one drop
+  showPlayButtonTimer = new Timer(0);  
+  showPlayButtonTimer.start();
+  noPlayTimer=new Timer(10000);
   //Hide the cursor
   noCursor();
   finish_game=false;
+  totalParticles= 0;
 }
 
 void draw() {
@@ -82,6 +86,17 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
+ if (bodies.size()!=0) 
+  {
+    kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
+    kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
+    c.run(kinect_x_pos,kinect_y_pos);
+  }
+  
+  // IF KINECT IS NOT ON
+  //kinect_x_pos=mouseX;
+  //kinect_y_pos=mouseY; 
+  
   if (state == stateWaitBeforeProgram) {
     background(255);
 
@@ -98,22 +113,25 @@ void draw() {
     // Place button
     shape(svg, width/2-width/8, height/2, 250*2, 75*2);
 
+    if(showPlayButtonTimer.isFinished()){
     //Check if cursor is over the button
-    checkMouseHoverAction(width/2-width/8, height/2, mouseX, mouseY, 250*2, 75*2);
+    checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2);
+    fill(color(128,128,128));
+    }
 
-    /*for (int i=0; i<bodies.size (); i++) 
-     {
+    c.run(kinect_x_pos,kinect_y_pos);
+    
+    for (int i=0; i<bodies.size (); i++)     
      c.run(int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width), int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height));
-     }*/
-
+    
     //SE NÃO TIVEREM ACESSO À KINECT:
-    fill(color(255, 255, 255));
-    c.run(mouseX, mouseY);
+   //fill(color(255, 255, 255));
+   //c.run(mouseX, mouseY);
   } else if (state==stateNormalProgram) {
 
     background(255);
 
-    c.run(mouseX, mouseY);
+    c.run(kinect_x_pos,kinect_y_pos);
 
     // Add more particles to the particle vector
     if (timer.isFinished()) {
@@ -121,11 +139,10 @@ void draw() {
       // Increment totalParticles
       totalParticles ++ ;     
       timer.start();
-      if (totalParticles>=TOTAL_PARTICLE)
+      if (totalParticles>=TOTAL_PARTICLE){
         finish_game=true;
+      }
     }
-
-
     // Move and display all drops
     if (!finish_game) {
       for (int i = 0; i < totalParticles; i++ ) {
@@ -133,7 +150,7 @@ void draw() {
         particles[i].display();
         if (particles[i].getCaughtState()==true) {
           particles[i].updateOpacity();
-          println(particles[i].getOpacity());
+          
           if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce()))
           {
             particles[i].caught();
@@ -146,36 +163,33 @@ void draw() {
           particles[i].setCaughtState(true);
       }
     }
-
     if (noPlayTimer.isFinished() || finish_game) {
       state=stateWaitAfterProgram;
       elapsed_time=(millis()-timeClicked)/1000;
-      
+      println("Acabou");
     }
   } else {
     
     showStats(s, m, h);
-
-
     // Place button
     shape(svg, width/2-width/8, height/2+height/8, 250*2, 75*2);
 
     //Check if cursor is over the button
-    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, mouseX, mouseY, 350, 100);
+    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, kinect_x_pos, kinect_y_pos, 350, 100);
 
-    c.run(mouseX, mouseY);
+    c.run(kinect_x_pos,kinect_y_pos);
     if (restart)
     {    
-
       //Restart and reset variables - user id and particles array 
       id_user++; 
       newUser = new User(id_user); 
       totalParticles = 0;
-      noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop
-      noPlayTimer.start();
+      noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop      
 
       finish_game=false;
       state=stateWaitBeforeProgram;
+      showPlayButtonTimer.setTime(3000);
+      showPlayButtonTimer.start();
     }
   }
 }
@@ -252,6 +266,7 @@ void checkMouseHoverAction(int rectXPos, int rectYpos, int xpos, int ypos, int r
     ypos >= rectYpos && ypos <= rectYpos+rectHeight && state == stateWaitBeforeProgram )
   {
     state=stateNormalProgram;
+    timer.start();             // Starting the timer
     timeClicked=millis();
   }
 }

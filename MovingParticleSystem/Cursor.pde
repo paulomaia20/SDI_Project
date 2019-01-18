@@ -11,7 +11,7 @@ class Cursor {
   void display() {
     stroke(0);
     strokeWeight(0.5);
-    fill(color(255, 255, 255));
+    fill(color(128,128,128));
     ellipse(xposition, yposition, r*2, r*2);
   }
 
