@@ -80,13 +80,17 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
-  if (bodies.size()!=0)
+ /* if (bodies.size()!=0) -- O PROBLEMA PODE SER AQUI. NO INICIO NAO DETETA NENHUM BODY! 
   {
     kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
     kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
    // c.run(kinect_x_pos,kinect_y_pos);
 
-  }
+  } */ 
+  
+  // IF KINECT IS NOT ON
+  kinect_x_pos=mouseX;
+  kinect_y_pos=mouseY; 
   
   if (state == stateWaitBeforeProgram) {
     background(255);
