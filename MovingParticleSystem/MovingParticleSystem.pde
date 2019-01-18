@@ -1,7 +1,13 @@
-import processing.video.*; //<>// //<>// //<>// //<>//
+import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
+import oscP5.*;
+import netP5.*;
+  
+OscP5 oscP5;
+NetAddress dest;
+
 
 Kinect kinect;
 int timeClicked, elapsed_time;
@@ -10,6 +16,7 @@ Capture video;
 final int stateWaitBeforeProgram = 0;
 final int stateWaitAfterProgram = 2;
 final int stateNormalProgram = 1;
+final int TOTAL_PARTICLE=100;
 int state = stateWaitBeforeProgram;
 User newUser;
 int id_user=1;
@@ -17,16 +24,28 @@ ArrayList <SkeletonData> bodies;
 bouncyWord title;
 PrintWriter output;
 Particle[] particles;
-Timer timer, flashTimer;        // One timer object
+Timer timer, flashTimer, noPlayTimer;        // One timer object
 int totalParticles = 0; // totalDrops
 PFont mono;
 PShape svg; 
 boolean vanishTransition=false; 
 boolean caughtState=false; 
-boolean touchedOnce=false; 
+boolean touchedOnce=false;
+boolean restart=false; 
+boolean finish_game;
+
+int particle_color;
 
 void setup() {
-  fullScreen();
+  
+  size(960, 720);
+  
+  /* start oscP5, listening for incoming messages at port 9000 */
+  oscP5 = new OscP5(this,9000);
+  dest = new NetAddress("127.0.0.1",6448);
+
+
+  //fullScreen();
 
   //Set standard font
   mono = createFont("FiraSans-Regular.ttf", 32);
@@ -48,14 +67,15 @@ void setup() {
   int d = day();     // Values from 1 - 31
   output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
 
-  particles = new Particle[50];      // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
-  timer = new Timer(400);    // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
+  particles = new Particle[TOTAL_PARTICLE];      // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
+  timer = new Timer(600);    // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
   timer.start();             // Starting the timer
 
-  flashTimer = new Timer(5000); //time of the game
-
+  noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop
+  flashTimer = new Timer(5000);
   //Hide the cursor
   noCursor();
+  finish_game=false;
 }
 
 void draw() {
@@ -80,7 +100,7 @@ void draw() {
     shape(svg, width/2-width/8, height/2, 250*2, 75*2);
 
     //Check if cursor is over the button
-    checkMouseHoverAction(width/2-width/12, height/2, mouseX, mouseY, 350, 100);
+    checkMouseHoverAction(width/2-width/8, height/2, mouseX, mouseY, 250*2, 75*2);
 
     /*for (int i=0; i<bodies.size (); i++) 
      {
@@ -93,22 +113,22 @@ void draw() {
   } else if (state==stateNormalProgram) {
 
     background(255);
-    //  shape(svg, width-width/12, height-height/8, width/16, height/8);
-    // fill(0);  //mudar para cor da partícula apanhada ?? pensar melhor ! 
-    // shape(svg2, width-width/12, height-height/8, width/16, height/8);
 
     c.run(mouseX, mouseY);
-    
+
     // Add more particles to the particle vector
     if (timer.isFinished()) {
       particles[totalParticles] = new Particle();
       // Increment totalParticles
-      totalParticles ++ ;
+      totalParticles ++ ;     
       timer.start();
+      if (totalParticles>=TOTAL_PARTICLE)
+        finish_game=true;
     }
 
 
     // Move and display all drops
+<<<<<<< HEAD
     for (int i = 0; i < totalParticles; i++ ) {
       particles[i].update();
       particles[i].display();
@@ -120,26 +140,61 @@ void draw() {
           particles[i].caught();
           print(particles[i].index_colour); 
           (newUser.getColoursStatistics())[particles[i].index_colour]++; //nao esta a contar bem... fora do loop conta mais que uma vez por particula
+          sendOSC(particles[i].index_colour);
+=======
+    if (!finish_game) {
+      for (int i = 0; i < totalParticles; i++ ) {
+        particles[i].update();
+        particles[i].display();
+        if (particles[i].getCaughtState()==true) {
+          particles[i].updateOpacity();
+          println(particles[i].getOpacity());
+          if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce()))
+          {
+            particles[i].caught();
+            noPlayTimer.start();
+            (newUser.getColoursStatistics())[particles[i].index_colour]++;
+          }
+>>>>>>> d3731766c0256e7e5bc8f6f36d156da1c3b69126
         }
+        if (c.intersect(particles[i])) 
+          particles[i].setCaughtState(true);
       }
-      if (c.intersect(particles[i])) 
-         particles[i].setCaughtState(true);    
     }
 
-    elapsed_time=(millis()-timeClicked)/1000; 
+    if (noPlayTimer.isFinished() || finish_game) {
+      state=stateWaitAfterProgram;
+      elapsed_time=(millis()-timeClicked)/1000;
+      
+    }
+  } else {
+    
+    showStats(s, m, h);
 
-    if (elapsed_time>5) {
 
-      state=stateWaitAfterProgram; 
-      showStats(s, m, h);
+    // Place button
+    shape(svg, width/2-width/8, height/2+height/8, 250*2, 75*2);
+
+    //Check if cursor is over the button
+    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, mouseX, mouseY, 350, 100);
+
+    c.run(mouseX, mouseY);
+    if (restart)
+    {    
 
       //Restart and reset variables - user id and particles array 
       id_user++; 
       newUser = new User(id_user); 
       totalParticles = 0;
+      noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop
+      noPlayTimer.start();
+
+      finish_game=false;
+      state=stateWaitBeforeProgram;
     }
   }
-} 
+}
+
 
 void showStats(int s, int m, int h)
 {
@@ -149,36 +204,39 @@ void showStats(int s, int m, int h)
   textSize(50);
   fill(0);
   textAlign(CENTER, CENTER);
-  text("O jogo terminou", width/2, height/2);
-  textSize(15);
-  text("Carrega no rato para iniciar novamente.", width/2, height/2+75);
+  text("O jogo terminou", width/2, height/12);
+
+  int xpos_particle_title=width/2-width/12; 
+  int ypos_particle_title=height/2; 
+  int xpos_particle_title_amount=width/2+width/12;
+  int ypos_particle_title_amount=height/2; 
 
   textAlign(LEFT, LEFT);
   textSize(20);
-  text("Tempo de jogo (s):", width/2-width/12, height/2-height/4-140);
-  text(elapsed_time, width/2+width/12, height/2-height/4-140);
+  text("Tempo de jogo (s):", xpos_particle_title, ypos_particle_title-140);
+  text(elapsed_time, xpos_particle_title_amount, ypos_particle_title_amount-140);
 
   // Mostrar estatísticas do utilizador
-  text("Partículas vermelhas:", width/2-width/12, height/2-height/4);
-  text(newUser.getColoursStatistics()[0], width/2+width/12, height/2-height/4);
+  text("Partículas vermelhas:", xpos_particle_title, ypos_particle_title);
+  text(newUser.getColoursStatistics()[0], xpos_particle_title_amount, ypos_particle_title_amount);
 
-  text("Partículas amarelas:", width/2-width/12, height/2-height/4-20);
-  text(newUser.getColoursStatistics()[1], width/2+width/12, height/2-height/4-20);
+  text("Partículas amarelas:", xpos_particle_title, ypos_particle_title-20);
+  text(newUser.getColoursStatistics()[1], xpos_particle_title_amount, ypos_particle_title_amount-20);
 
-  text("Partículas laranjas:", width/2-width/12, height/2-height/4-40);
-  text(newUser.getColoursStatistics()[2], width/2+width/12, height/2-height/4-40);
+  text("Partículas laranjas:", xpos_particle_title, ypos_particle_title-40);
+  text(newUser.getColoursStatistics()[2], xpos_particle_title_amount, ypos_particle_title_amount-40);
 
-  text("Partículas verdes:", width/2-width/12, height/2-height/4-60);
-  text(newUser.getColoursStatistics()[3], width/2+width/12, height/2-height/4-60);
+  text("Partículas verdes:", xpos_particle_title, ypos_particle_title-60);
+  text(newUser.getColoursStatistics()[3], xpos_particle_title_amount, ypos_particle_title_amount-60);
 
-  text("Partículas azuis:", width/2-width/12, height/2-height/4-80);
-  text(newUser.getColoursStatistics()[4], width/2+width/12, height/2-height/4-80);
+  text("Partículas azuis:", xpos_particle_title, ypos_particle_title-80);
+  text(newUser.getColoursStatistics()[4], xpos_particle_title_amount, ypos_particle_title_amount-80);
 
-  text("Partículas roxas:", width/2-width/12, height/2-height/4-100);
-  text(newUser.getColoursStatistics()[5], width/2+width/12, height/2-height/4-100);
+  text("Partículas roxas:", xpos_particle_title, ypos_particle_title-100);
+  text(newUser.getColoursStatistics()[5], xpos_particle_title_amount, ypos_particle_title_amount-100);
 
-  text("Partículas cinzentas:", width/2-width/12, height/2-height/4-120);
-  text(newUser.getColoursStatistics()[6], width/2+width/12, height/2-height/4-120);
+  text("Partículas cinzentas:", xpos_particle_title, ypos_particle_title-120);
+  text(newUser.getColoursStatistics()[6], xpos_particle_title_amount, ypos_particle_title_amount-120);
 
   String formatStr = "%-25s %-15s";
 
@@ -208,26 +266,26 @@ void checkMouseHoverAction(int rectXPos, int rectYpos, int xpos, int ypos, int r
   if (xpos >= rectXPos && xpos <= rectXPos+rectWidth && 
     ypos >= rectYpos && ypos <= rectYpos+rectHeight && state == stateWaitBeforeProgram )
   {
-
-    state=stateNormalProgram ;
+    state=stateNormalProgram;
     timeClicked=millis();
   }
 }
 
-void mousePressed() {
 
-  if (state == stateWaitAfterProgram) {
-    state=stateNormalProgram ;
-    timeClicked=millis(); 
-    //Reset variables!
+boolean checkMouseHoverAction_afterEnd(int rectXPos, int rectYpos, int xpos, int ypos, int rectWidth, int rectHeight)
+{
+  if (xpos >= rectXPos && xpos <= rectXPos+rectWidth && 
+    ypos >= rectYpos && ypos <= rectYpos+rectHeight && state == stateWaitAfterProgram )
+  {
+    state=stateNormalProgram;
+    timeClicked=millis();
+    return true;
   }
-} 
-
-void captureEvent(Capture c) {
-  c.read();
+  return false;
 }
 
 // Kinect lib
+
 void drawPosition(SkeletonData _s) 
 {
   noStroke();
@@ -370,3 +428,9 @@ void moveEvent(SkeletonData _b, SkeletonData _a)
     }
   }
 }
+
+   void sendOSC(int particle_color) {
+    OscMessage msg = new OscMessage("/inputs");
+    msg.add((int)particle_color); 
+    oscP5.send(msg, dest);
+      }

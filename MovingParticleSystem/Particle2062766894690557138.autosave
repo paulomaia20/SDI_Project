@@ -1,4 +1,4 @@
-// Simple Particle System //<>// //<>//
+// Simple Particle System //<>//
 /*              R    G    B
  [0] red       239  51   64
  [1] yellow    243  207  85
@@ -46,7 +46,6 @@ class Particle {
     index_colour=int(random(0, 7));    
     filling=vectorColours[index_colour];
     opacity=255;
-    touchedOnce=false;
   }
 
   void run() {
@@ -73,8 +72,7 @@ class Particle {
   }
 
   void updateOpacity() {
-    if(opacity>0)
-      opacity=opacity-(speed*2);
+    opacity=opacity-20;
   }
 
   void setCaughtState(boolean state) {
@@ -89,10 +87,12 @@ class Particle {
   {
     return opacity;
   }
-
-  boolean getTouchedOnce(){
-    return touchedOnce;
+  
+  int getColor()
+  {
+    return index_colour;
   }
+
   // Check if it hits the bottom
   boolean reachedBottom() {
     // If we go a little beyond the bottom
@@ -110,6 +110,5 @@ class Particle {
     speed = 0; 
     // Set the location to somewhere way off-screen
     y = -1000;
-    touchedOnce=true;
   }
 }
