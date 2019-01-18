@@ -2,6 +2,12 @@ import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
+import oscP5.*;
+import netP5.*;
+  
+OscP5 oscP5;
+NetAddress dest;
+
 
 Kinect kinect;
 int timeClicked, elapsed_time;
@@ -30,6 +36,11 @@ boolean finish_game;
 
 void setup() {
   fullScreen();
+  
+  /* start oscP5, listening for incoming messages at port 9000 */
+  oscP5 = new OscP5(this,9000);
+  dest = new NetAddress("127.0.0.1",6448);
+
 
   //Set standard font
   mono = createFont("FiraSans-Regular.ttf", 32);
@@ -124,6 +135,7 @@ void draw() {
             particles[i].caught();
             noPlayTimer.start();
             (newUser.getColoursStatistics())[particles[i].index_colour]++;
+            sendOsc(particles[i].index_colour);
           }
         }
         if (c.intersect(particles[i])) 
@@ -397,3 +409,9 @@ void moveEvent(SkeletonData _b, SkeletonData _a)
     }
   }
 }
+
+void sendOsc(int particle_color) {
+  OscMessage msg = new OscMessage("/inputs");
+  msg.add((float)particle_color); 
+  oscP5.send(msg, dest);
+    }
