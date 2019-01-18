@@ -1,7 +1,13 @@
-import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
+import oscP5.*;
+import netP5.*;
+  
+OscP5 oscP5;
+NetAddress dest;
+
 
 Kinect kinect;
 int timeClicked, elapsed_time;
@@ -27,9 +33,15 @@ boolean caughtState=false;
 boolean touchedOnce=false;
 boolean restart=false; 
 boolean finish_game;
+int kinect_x_pos, kinect_y_pos;
 
 void setup() {
   fullScreen();
+  
+  /* start oscP5, listening for incoming messages at port 9000 */
+  oscP5 = new OscP5(this,9000);
+  dest = new NetAddress("127.0.0.1",6448);
+
 
   //Set standard font
   mono = createFont("FiraSans-Regular.ttf", 32);
@@ -68,6 +80,18 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
+ /* if (bodies.size()!=0) -- O PROBLEMA PODE SER AQUI. NO INICIO NAO DETETA NENHUM BODY! 
+  {
+    kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
+    kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
+   // c.run(kinect_x_pos,kinect_y_pos);
+
+  } */ 
+  
+  // IF KINECT IS NOT ON
+  kinect_x_pos=mouseX;
+  kinect_y_pos=mouseY; 
+  
   if (state == stateWaitBeforeProgram) {
     background(255);
 
@@ -84,21 +108,24 @@ void draw() {
     shape(svg, width/2-width/8, height/2, 250*2, 75*2);
 
     //Check if cursor is over the button
-    checkMouseHoverAction(width/2-width/8, height/2, mouseX, mouseY, 250*2, 75*2);
+    checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2);
+    fill(color(128,128,128));
 
+       c.run(kinect_x_pos,kinect_y_pos);
+    
     /*for (int i=0; i<bodies.size (); i++) 
      {
      c.run(int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width), int(bodies.get(i).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height));
-     }*/
+     }*/ 
 
     //SE NÃO TIVEREM ACESSO À KINECT:
-    fill(color(255, 255, 255));
-    c.run(mouseX, mouseY);
+   // fill(color(255, 255, 255));
+  //  c.run(mouseX, mouseY);
   } else if (state==stateNormalProgram) {
 
     background(255);
 
-    c.run(mouseX, mouseY);
+c.run(kinect_x_pos,kinect_y_pos);
 
     // Add more particles to the particle vector
     if (timer.isFinished()) {
@@ -124,6 +151,7 @@ void draw() {
             particles[i].caught();
             noPlayTimer.start();
             (newUser.getColoursStatistics())[particles[i].index_colour]++;
+            sendOsc(particles[i].index_colour);
           }
         }
         if (c.intersect(particles[i])) 
@@ -145,10 +173,10 @@ void draw() {
     shape(svg, width/2-width/8, height/2+height/8, 250*2, 75*2);
 
     //Check if cursor is over the button
-    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, mouseX, mouseY, 350, 100);
+    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, kinect_x_pos, kinect_y_pos, 350, 100);
 
-    c.run(mouseX, mouseY);
-    if (restart)
+c.run(kinect_x_pos,kinect_y_pos);
+if (restart)
     {    
 
       //Restart and reset variables - user id and particles array 
@@ -397,3 +425,9 @@ void moveEvent(SkeletonData _b, SkeletonData _a)
     }
   }
 }
+
+void sendOsc(int particle_color) {
+  OscMessage msg = new OscMessage("/inputs");
+  msg.add((float)particle_color); 
+  oscP5.send(msg, dest);
+    }
