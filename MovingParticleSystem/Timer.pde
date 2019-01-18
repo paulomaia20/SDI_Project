@@ -17,15 +17,21 @@ class Timer {
     savedTime = millis();
   }
 
+  int getSavedTime(){
+    return savedTime;
+  }
   // The function isFinished() returns true if X ms have passed. 
   // The work of the timer is farmed out to this method.
   boolean isFinished() { 
     // Check how much time has passed
-    int passedTime = millis()- savedTime;
-    if (passedTime > totalTime) {
-      return true;
-    } else {
-      return false;
+    if (savedTime!=0){
+      int passedTime = millis()- savedTime;
+      if (passedTime > totalTime) {
+        return true;
+      } else {
+        return false;
+      }
+     }else{
+      return false;}
     }
   }
-}

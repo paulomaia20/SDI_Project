@@ -1,6 +1,8 @@
-﻿id 1
+id 1
+início às 15:17:46
 
-partículas vermelhas      0              
+
+partículas vermelhas      1              
 partículas amarelas       0              
 partículas laranjas       0              
 partículas verdes         0              
