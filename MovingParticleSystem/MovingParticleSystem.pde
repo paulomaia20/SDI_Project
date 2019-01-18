@@ -33,7 +33,6 @@ boolean caughtState=false;
 boolean touchedOnce=false;
 boolean restart=false; 
 boolean finish_game;
-int particle_color;
 void setup() {
   
   size(960, 720);
