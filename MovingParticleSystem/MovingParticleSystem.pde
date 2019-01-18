@@ -35,11 +35,14 @@ boolean restart=false;
 boolean finish_game;
 
 void setup() {
-  fullScreen();
+  size(600,800);
+  //fullScreen();
   
   /* start oscP5, listening for incoming messages at port 9000 */
   oscP5 = new OscP5(this,9000);
   dest = new NetAddress("127.0.0.1",6448);
+  sendOsc(555);
+
 
 
   //Set standard font
@@ -90,6 +93,7 @@ void draw() {
     textSize(20);
     textAlign(CENTER, CENTER);
     text ("Passa o cursor por cima do botão para iniciar o jogo", width/2, height/2+300);
+    
 
     // Place button
     shape(svg, width/2-width/8, height/2, 250*2, 75*2);
@@ -260,6 +264,7 @@ boolean checkMouseHoverAction_afterEnd(int rectXPos, int rectYpos, int xpos, int
   {
     state=stateNormalProgram;
     timeClicked=millis();
+    sendOsc(777);
     return true;
   }
   return false;

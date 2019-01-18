@@ -1,11 +1,11 @@
 id 1
-início às 11:29:6
+início às 15:38:40
 
 
-partículas vermelhas      0              
-partículas amarelas       7              
+partículas vermelhas      2              
+partículas amarelas       12             
 partículas laranjas       5              
-partículas verdes         3              
-partículas azuis          10             
-partículas roxas          5              
-partículas cinzentas      5              
+partículas verdes         10             
+partículas azuis          12             
+partículas roxas          11             
+partículas cinzentas      8              
