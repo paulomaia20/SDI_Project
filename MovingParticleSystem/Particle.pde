@@ -48,6 +48,17 @@ class Particle {
     opacity=255;
     touchedOnce=false;
   }
+  
+    Particle(int index_colour) {
+
+    r = 12;                   // All raindrops are the same size
+    x = random(width);       // Start with a random x location
+    y = -r*4;                // Start a little above the window
+    speed = random(1, 10);    // Pick a random speed
+    filling=vectorColours[index_colour];
+    opacity=255;
+    touchedOnce=false;
+  }
 
   void run() {
     update();

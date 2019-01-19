@@ -26,7 +26,7 @@ bouncyWord title;
 PrintWriter output;
 Particle[] particles;
 Timer timer, noPlayTimer, showPlayButtonTimer;        // One timer object
-int totalParticles,totalThunders;  // totalDrops
+int totalParticles,totalThunders,thunderCountdown;  // totalDrops
 PFont mono;
 PShape svg; 
 boolean vanishTransition=false; 
@@ -58,6 +58,7 @@ PImage [] arrayImages = new PImage[5];
 void setup() {
   
   fullScreen();
+  //size(400,500);
 
   for (int i = 0; i < arrayImages.length; i++) {
     arrayImages[i] = loadImage("rain0" + i + ".png");
@@ -101,6 +102,7 @@ void setup() {
   finish_game=false;
   totalParticles= 0;
   totalThunders=0;
+  thunderCountdown=0;
 }
 
 void draw() {  
@@ -161,17 +163,23 @@ void draw() {
     background(255);
     c.run(kinect_x_pos,kinect_y_pos);
     // Add more particles to the particle vector
-    if (timer.isFinished()) {
+    if (timer.isFinished()) {     
+      if (thunderCountdown==10){
+      int thunderX=(int) random(width);
+      thunders = new Thunder(thunderX);
+      particles[totalParticles] = new Particle(thunders.index_colour);
+      // Increment totalParticles
+      totalParticles ++ ; 
+      timer.start();
+      thunderCountdown=0;
+      totalThunders ++; 
+      }
+      else{
       particles[totalParticles] = new Particle();
       // Increment totalParticles
       totalParticles ++ ; 
       timer.start();
-
-      int thunderX=(int) random(width);
-      thunders = new Thunder(thunderX); 
-
-      //thunder(thunderX);
-      totalThunders ++; 
+        thunderCountdown++;}      
       }
        
      // println(totalParticles);
