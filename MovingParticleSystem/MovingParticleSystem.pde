@@ -50,19 +50,21 @@ color grey=color(129, 131, 135);
 
 color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 
-
-
+PImage screenImage;
+PImage [] arrayImages = new PImage[5];
 
 void setup() {
-  //size(600,800);
-  fullScreen();
   
+  fullScreen();
+
+  for (int i = 0; i < arrayImages.length; i++) {
+    arrayImages[i] = loadImage("rain0" + i + ".png");
+  }
+    
   /* start oscP5, listening for incoming messages at port 9000 */
   oscP5 = new OscP5(this,9000);
   dest = new NetAddress("127.0.0.1",6448);
   sendOsc(555);
-
-
 
   //Set standard font
   mono = createFont("FiraSans-Regular.ttf", 32);
@@ -99,7 +101,7 @@ void setup() {
   
 }
 
-void draw() {
+void draw() {  
 
   int s = second();  // Values from 0 - 59
   int m = minute();  // Values from 0 - 59
@@ -118,16 +120,30 @@ void draw() {
   
   if (state == stateWaitBeforeProgram) {
     background(255);
+    
+    if (screenImage == arrayImages[0]) {
+    screenImage = arrayImages[1];
+  } else if (screenImage == arrayImages[1]) {
+    screenImage = arrayImages[2];
+  } else if (screenImage == arrayImages[2]) {
+    screenImage = arrayImages[3];
+  } else if (screenImage == arrayImages[3]) {
+    screenImage = arrayImages[4]; 
+  } else {
+    screenImage = arrayImages[0];
+  }
+  
+  //frameRate(2);
+  image(screenImage, 0, 0, width, height);
 
     textAlign(CENTER);
     textSize(50);
-    fill(0); 
+    fill(255); 
     title.draw();
 
     textSize(20);
     textAlign(CENTER, CENTER);
     text ("Passa o cursor por cima do botão para iniciar o jogo", width/2, height/2+300);
-    
 
     // Place button
     shape(svg, width/2-width/8, height/2, 250*2, 75*2);
