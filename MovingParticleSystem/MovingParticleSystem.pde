@@ -1,40 +1,46 @@
-import processing.video.*; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+import processing.video.*;  //<>//
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
 import oscP5.*;
 import netP5.*;
-  
+
+//OPEN SOUND CONTROL
 OscP5 oscP5;
 NetAddress dest;
 
-final int RADIUS=20;
-
-Kinect kinect;
-int timeClicked, elapsed_time, elapsed_time1;
-Cursor c; 
-Capture video;
+//States
 final int stateWaitBeforeProgram = 0;
 final int stateWaitAfterProgram = 2;
 final int stateNormalProgram = 1;
-final int TOTAL_PARTICLE=100;
+final int statePauseProgram=3; 
 int state = stateWaitBeforeProgram;
+
+//Kinect-related variables
+final int RADIUS=20; //Cursor radius 
+Kinect kinect;
+int timeClicked, elapsed_time, elapsed_time1;
+Cursor c; 
+ArrayList <SkeletonData> bodies;
+int kinect_x_pos, kinect_y_pos;
+
+final int TOTAL_PARTICLE=100;
+
+//User variables
 User newUser;
 int id_user=1;
-ArrayList <SkeletonData> bodies;
+
+//Others 
 bouncyWord title;
 PrintWriter output;
 Particle[] particles;
 Timer timer, noPlayTimer, showPlayButtonTimer;        // One timer object
 int totalParticles,totalThunders,thunderCountdown;    // totalDrops
 PFont mono;
-boolean vanishTransition=false; 
-boolean caughtState=false; 
-boolean touchedOnce=false;
+//boolean caughtState=false; 
+//boolean touchedOnce=false;
 boolean restart=false; 
 boolean finish_game;
-int kinect_x_pos, kinect_y_pos;
-int thunderopacity=255; 
 
 int thunderNum1;
 int thunderNum2;
@@ -52,26 +58,30 @@ color grey=color(129, 131, 135);
 color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 
 PImage screenImage;
-PImage [] arrayImages = new PImage[5];
+PShape [] arrayImages = new PShape[5];
 
-PShape button; 
+PShape button, button_restart; 
 PShape [] arrayShapes = new PShape[7];
+int idx_screenimage; 
+
+PShape testimg; 
 
 void setup() {
     
   fullScreen();
-  //size(400,500);
 
+  // Load rain images for start menu
   for (int i = 0; i < arrayImages.length; i++) {
-    arrayImages[i] = loadImage("rain0" + i + ".png");
+    arrayImages[i] = loadShape("rain0" + i + ".svg");
   }
   
+  //Load body shapes for main menu
   // arrayShapes = {full_body, head, left_arm, body, right_arm, left_leg, right_leg}
   for (int i = 0; i < arrayShapes.length; i++) {
     arrayShapes[i] = loadShape("bodypart0" + i + ".svg"); 
   }
     
-  /* start oscP5, listening for incoming messages at port 9000 */
+  // start oscP5, listening for incoming messages at port 9000 
   oscP5 = new OscP5(this,9000);
   dest = new NetAddress("127.0.0.1",6448);
   sendOsc(555);
@@ -83,14 +93,21 @@ void setup() {
   //Set bouncy title
   title = new bouncyWord("Raindrop", width/2);
 
+  // Create new user
   newUser= new User(id_user);
   kinect = new Kinect(this);
   bodies = new ArrayList<SkeletonData>();
-  c = new Cursor(RADIUS); //Cursor with radius 20 
+  c = new Cursor(RADIUS); //Cursor with radius RADIUS
 
-  frameRate(120);
-  smooth();
+  frameRate(300);
+  //smooth();
+  
+  //Load button for main menu
   button = loadShape("button.svg");
+  button_restart = loadShape("restart_game_button.svg");
+  
+  testimg= loadShape("rain01.svg");
+
 
   // create a file in the sketch directory
   int d = day();  // Values from 1 - 31
@@ -104,12 +121,15 @@ void setup() {
   showPlayButtonTimer.start();
   noPlayTimer=new Timer(10000);
   noPlayTimer.start(); 
-  // Hide the cursor
-  noCursor();
+  
+  noCursor();   // Hide the cursor
+  
+  //Initialize game-related variables
   finish_game=false;
   totalParticles=0;
   totalThunders=0;
   thunderCountdown=0;
+  idx_screenimage=0; 
 }
 
 void draw() {  
@@ -124,6 +144,9 @@ void draw() {
     c.run(kinect_x_pos,kinect_y_pos);
   }*/
   
+  if (bodies.size()>=2)
+      state=statePauseProgram; 
+  
   // IF KINECT IS NOT ON
   kinect_x_pos=mouseX;
   kinect_y_pos=mouseY; 
@@ -132,19 +155,39 @@ void draw() {
     background(255);
     
     // initial menu
-    if (screenImage == arrayImages[0]) {
-      screenImage = arrayImages[1];
-    } else if (screenImage == arrayImages[1]) {
-      screenImage = arrayImages[2];
-    } else if (screenImage == arrayImages[2]) {
-      screenImage = arrayImages[3];
-    } else if (screenImage == arrayImages[3]) {
-      screenImage = arrayImages[4]; 
+    
+    /* switch(idx_screenimage) {
+      case(0):
+         idx_screenimage = 1;
+       case(1):
+         idx_screenimage = 2;
+       case(2):
+         idx_screenimage = 3;
+       case(3):
+         idx_screenimage = 4;
+       case(4):
+        idx_screenimage = 0;
+
+     }*/ 
+     
+     //print(idx_screenimage); 
+
+
+   if (idx_screenimage == 0) {
+         idx_screenimage = 1;
+    } else if (idx_screenimage == 1) {
+         idx_screenimage = 2;
+    } else if (idx_screenimage == 2) {
+         idx_screenimage = 3;
+    } else if (idx_screenimage == 3) {
+         idx_screenimage = 4;
     } else {
-      screenImage = arrayImages[0];
-    }
+         idx_screenimage = 0;
+    }   
+
   
-    image(screenImage, 0, 0, width, height);
+    //image(arrayImages[idx_screenimage], 0, 0, width, height);
+    shape(arrayImages[idx_screenimage], 0, 0, width, height);
 
     fill(255); 
     textAlign(CENTER);
@@ -159,7 +202,7 @@ void draw() {
     shape(button, width/2-width/8, height/2, 250*2, 75*2);
     if (showPlayButtonTimer.isFinished()) {  
       //Check if cursor is over the button
-      checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2);
+      checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2); //Diria para começar o noPlayTimer aqui. Esta ação podia ser um booleano 
       fill(color(128,128,128));
     }
 
@@ -266,16 +309,16 @@ void draw() {
       println("Acabou");
     }
     
-  } else {
+  } else if (state == stateWaitAfterProgram) {
     
     showStats(s, m, h);
     c.run(kinect_x_pos,kinect_y_pos);
 
     // Place button
-    shape(button, width/2-width/8, height/2+height/8, 250*2, 75*2);
+    shape(button_restart, width/2-width/10, height/2+height/8, 370,100);
 
     //Check if cursor is over the button
-    restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, kinect_x_pos, kinect_y_pos, 350, 100);
+    restart = checkMouseHoverAction_afterEnd(width/2-width/10, height/2+height/8, kinect_x_pos, kinect_y_pos, 370,100);
 
     if (restart)
     {    
@@ -291,6 +334,18 @@ void draw() {
       showPlayButtonTimer.start();
     }
   }
+  
+  else if (state == statePauseProgram)
+  
+  {
+  background(255); 
+  textSize(30);
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text("Apenas é permitido um jogador de cada vez.", width/2, height/2);
+  text("Está a ser detetado mais do que um jogador. ", width/2, height/2-height/8);     
+  }
+  
 }
 
 
