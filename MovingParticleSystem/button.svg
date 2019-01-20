@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -8,17 +7,6 @@
 <g>
 	<g opacity="0.5">
 		
-=======
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="284.592px" height="93.364px" viewBox="0 0 284.592 93.364" enable-background="new 0 0 284.592 93.364"
-	 xml:space="preserve">
-<g>
-	<g opacity="0.5">
-		
->>>>>>> Stashed changes
 			<image overflow="visible" width="1960" height="643" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB7IAAAKOCAYAAAArllYUAAAACXBIWXMAAExHAABMRwG9K54bAAAA
 GXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAB+i9JREFUeNrs3ctyJEl2oGlVNXMg
 EHmtYpItnCa7RaqK3dLrnnmEech+Ds6uXmBEuGmR2VRKsxckF0NyipUtFVEZAXcz1bFzjqqZmrmZ
@@ -2294,22 +2282,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAs/D/
-<<<<<<< Updated upstream
-BRgAETrt/RWZW/0AAAAASUVORK5CYII=" transform="matrix(0.1452 0 0 0.1452 0 0)">
-		</image>
-	</g>
-</g>
-<path fill="#C4C8C8" d="M259.265,40.401c0,13.697-11.104,28.802-24.801,28.802H50.032c-13.697,0-24.801-11.105-24.801-24.803l0,0
-	c0-13.697,11.104-24.801,24.801-24.801h184.432C248.162,19.6,259.265,26.704,259.265,40.401"/>
-<path fill="#F6F5F5" d="M259.265,35.438c0,13.697-11.104,28.802-24.801,28.802H50.032c-13.697,0-24.801-11.105-24.801-24.802l0,0
-	c0-13.697,11.104-24.8,24.801-24.8h184.432C248.162,14.639,259.265,21.741,259.265,35.438"/>
-<path fill="#EEEDEC" d="M259.265,37.467c0,13.696-11.104,28.801-24.801,28.801H50.032c-13.697,0-24.801-11.105-24.801-24.801l0,0
-	c0-13.698,11.104-24.802,24.801-24.802h184.432C248.162,16.665,259.265,23.77,259.265,37.467"/>
-<g>
-	<text transform="matrix(1 0 0 1 76.2324 51.0591)" fill="#C4C8C8" font-family="'OpenSans-Bold'" font-size="30.25">COMEÇAR</text>
-</g>
-</svg>
-=======
 BRgAETrt/RWZW/0AAAAASUVORK5CYII=" transform="matrix(0.1452 0 0 0.1452 0 0)">
 		</image>
 	</g>
@@ -2349,4 +2321,3 @@ BRgAETrt/RWZW/0AAAAASUVORK5CYII=" transform="matrix(0.1452 0 0 0.1452 0 0)">
 	</g>
 </g>
 </svg>
->>>>>>> Stashed changes

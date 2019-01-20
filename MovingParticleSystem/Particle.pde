@@ -1,4 +1,4 @@
-// Simple Particle System //<>// //<>//
+// Simple Particle System //<>// //<>// //<>//
 /*              R    G    B
  [0] red       239  51   64
  [1] yellow    243  207  85

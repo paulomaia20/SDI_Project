@@ -26,9 +26,8 @@ bouncyWord title;
 PrintWriter output;
 Particle[] particles;
 Timer timer, noPlayTimer, showPlayButtonTimer;        // One timer object
-int totalParticles,totalThunders,thunderCountdown;  // totalDrops
+int totalParticles,totalThunders,thunderCountdown;    // totalDrops
 PFont mono;
-PShape svg; 
 boolean vanishTransition=false; 
 boolean caughtState=false; 
 boolean touchedOnce=false;
@@ -55,13 +54,21 @@ color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 PImage screenImage;
 PImage [] arrayImages = new PImage[5];
 
+PShape button; 
+PShape [] arrayShapes = new PShape[7];
+
 void setup() {
-  
+    
   fullScreen();
   //size(400,500);
 
   for (int i = 0; i < arrayImages.length; i++) {
     arrayImages[i] = loadImage("rain0" + i + ".png");
+  }
+  
+  // arrayShapes = {full_body, head, left_arm, body, right_arm, left_leg, right_leg}
+  for (int i = 0; i < arrayShapes.length; i++) {
+    arrayShapes[i] = loadShape("bodypart0" + i + ".svg"); 
   }
     
   /* start oscP5, listening for incoming messages at port 9000 */
@@ -79,28 +86,28 @@ void setup() {
   newUser= new User(id_user);
   kinect = new Kinect(this);
   bodies = new ArrayList<SkeletonData>();
-  c = new Cursor(RADIUS); //Cursor with radius 12 
+  c = new Cursor(RADIUS); //Cursor with radius 20 
 
   frameRate(120);
   smooth();
-  svg = loadShape("button4.svg");
+  button = loadShape("button.svg");
 
   // create a file in the sketch directory
-  int d = day();     // Values from 1 - 31
+  int d = day();  // Values from 1 - 31
   output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
 
-  particles = new Particle[TOTAL_PARTICLE];      // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
-  timer = new Timer(600);    // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
+  particles = new Particle[TOTAL_PARTICLE];  // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
+  timer = new Timer(600);  // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
 
-   //timer to count the time since the last time the user caught one drop
+  // timer to count the time since the last time the user caught one drop
   showPlayButtonTimer = new Timer(0);  
   showPlayButtonTimer.start();
   noPlayTimer=new Timer(10000);
   noPlayTimer.start(); 
-  //Hide the cursor
+  // Hide the cursor
   noCursor();
   finish_game=false;
-  totalParticles= 0;
+  totalParticles=0;
   totalThunders=0;
   thunderCountdown=0;
 }
@@ -111,12 +118,11 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
- //if (bodies.size()!=0) 
- // {
- //   kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
- //   kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
- //   c.run(kinect_x_pos,kinect_y_pos);
- // }
+  /*if (bodies.size()!=0) {
+    kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
+    kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
+    c.run(kinect_x_pos,kinect_y_pos);
+  }*/
   
   // IF KINECT IS NOT ON
   kinect_x_pos=mouseX;
@@ -125,71 +131,72 @@ void draw() {
   if (state == stateWaitBeforeProgram) {
     background(255);
     
+    // initial menu
     if (screenImage == arrayImages[0]) {
-    screenImage = arrayImages[1];
-  } else if (screenImage == arrayImages[1]) {
-    screenImage = arrayImages[2];
-  } else if (screenImage == arrayImages[2]) {
-    screenImage = arrayImages[3];
-  } else if (screenImage == arrayImages[3]) {
-    screenImage = arrayImages[4]; 
-  } else {
-    screenImage = arrayImages[0];
-  }
+      screenImage = arrayImages[1];
+    } else if (screenImage == arrayImages[1]) {
+      screenImage = arrayImages[2];
+    } else if (screenImage == arrayImages[2]) {
+      screenImage = arrayImages[3];
+    } else if (screenImage == arrayImages[3]) {
+      screenImage = arrayImages[4]; 
+    } else {
+      screenImage = arrayImages[0];
+    }
   
-  //frameRate(2);
-  image(screenImage, 0, 0, width, height);
+    image(screenImage, 0, 0, width, height);
 
+    fill(255); 
     textAlign(CENTER);
     textSize(50);
-    fill(255); 
     title.draw();
+    
     textSize(20);
     textAlign(CENTER, CENTER);
-    text ("Passa o cursor por cima do botão para iniciar o jogo", width/2, height/2+300);
+    text("Passa o cursor por cima do botão para iniciar o jogo.", width/2, height/2+300);
 
     // Place button
-    shape(svg, width/2-width/8, height/2, 250*2, 75*2);
-    if(showPlayButtonTimer.isFinished()){  
-    //Check if cursor is over the button
-    checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2);
-    fill(color(128,128,128));
+    shape(button, width/2-width/8, height/2, 250*2, 75*2);
+    if (showPlayButtonTimer.isFinished()) {  
+      //Check if cursor is over the button
+      checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2);
+      fill(color(128,128,128));
     }
 
     c.run(kinect_x_pos,kinect_y_pos);
     
-  } else if (state==stateNormalProgram) {
-
+  } else if (state == stateNormalProgram) {
+    
     background(255);
+    
+    noStroke();
+    shape(arrayShapes[0], width-width/12, height-height/5, width/10, height/5); 
+    
     c.run(kinect_x_pos,kinect_y_pos);
     // Add more particles to the particle vector
     if (timer.isFinished()) {     
-      if (thunderCountdown==10){
-      int thunderX=(int) random(width);
-      thunders = new Thunder(thunderX);
-      particles[totalParticles] = new Particle(thunders.index_colour);
-      // Increment totalParticles
-      totalParticles ++ ; 
-      timer.start();
-      thunderCountdown=0;
-      totalThunders ++; 
+      if (thunderCountdown==10) {
+        int thunderX=(int) random(width);
+        thunders = new Thunder(thunderX);
+        particles[totalParticles] = new Particle(thunders.index_colour);
+        // Increment totalParticles
+        totalParticles ++ ; 
+        timer.start();
+        thunderCountdown=0;
+        totalThunders ++; 
+      } else {
+        particles[totalParticles] = new Particle();
+        // Increment totalParticles
+        totalParticles++; 
+        timer.start();
+        thunderCountdown++;
       }
-      else{
-      particles[totalParticles] = new Particle();
-      // Increment totalParticles
-      totalParticles ++ ; 
-      timer.start();
-        thunderCountdown++;}      
-      }
+    }
        
-     // println(totalParticles);
-    //   }
-      if (totalParticles>=TOTAL_PARTICLE)
-        finish_game=true;
-      
-   
-    
-
+    //println(totalParticles);
+    //}
+    if (totalParticles>=TOTAL_PARTICLE)
+      finish_game=true;
     
     // Move and display all drops
     if (!finish_game) {
@@ -197,26 +204,62 @@ void draw() {
       if (thunders!=null)
         thunders.display(); 
 
-      for (int i = 0; i < totalParticles; i++ ) {
+      for (int i = 0; i < totalParticles; i++) {
         particles[i].update();
         particles[i].display();
         if (particles[i].getCaughtState()==true) {
-          particles[i].updateOpacity();
+          particles[i].updateOpacity();        
           
-          if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce()))
-          {
+          if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce())) {
             particles[i].caught();
             noPlayTimer.start();
             (newUser.getColoursStatistics())[particles[i].index_colour]++;
-            sendOsc(particles[i].index_colour);
+            sendOsc(particles[i].index_colour);            
           }
         }
-        if (c.intersect(particles[i])) 
+        if (c.intersect(particles[i])) {
           particles[i].setCaughtState(true);
-         
-        
+          
+          // fill body parts with colours   
+          switch(particles[i].index_colour) {
+            case 0: // red
+            case 1: // yellow
+            case 2: // orange
+            case 5: // purple
+              arrayShapes[3].disableStyle(); // body
+              fill(vectorColours[particles[i].index_colour]);
+              noStroke();
+              shape(arrayShapes[3], width-width/12, height-height/5, width/10, height/5);
+              break;
+            case 4: // blue
+            case 6: // grey
+              arrayShapes[1].disableStyle(); // head
+              fill(vectorColours[particles[i].index_colour]);
+              noStroke();
+              shape(arrayShapes[1], width-width/12, height-height/5, width/10, height/5);
+              break;
+            case 3: // green
+              fill(vectorColours[particles[i].index_colour]);
+              arrayShapes[2].disableStyle(); // limbs
+              noStroke();
+              shape(arrayShapes[2], width-width/12, height-height/5, width/10, height/5);
+                  
+              arrayShapes[4].disableStyle();
+              noStroke();
+              shape(arrayShapes[4], width-width/12, height-height/5, width/10, height/5);
+              
+              arrayShapes[5].disableStyle();
+              noStroke();
+              shape(arrayShapes[5], width-width/12, height-height/5, width/10, height/5);
+                  
+              arrayShapes[6].disableStyle();
+              noStroke();
+              shape(arrayShapes[6], width-width/12, height-height/5, width/10, height/5);
+          }  
+        }
+      }
     }
-    }
+    
     if (noPlayTimer.isFinished() || finish_game) {
       state=stateWaitAfterProgram;
       elapsed_time=(millis()-timeClicked)/1000;
@@ -226,10 +269,10 @@ void draw() {
   } else {
     
     showStats(s, m, h);
-        c.run(kinect_x_pos,kinect_y_pos);
+    c.run(kinect_x_pos,kinect_y_pos);
 
     // Place button
-    shape(svg, width/2-width/8, height/2+height/8, 250*2, 75*2);
+    shape(button, width/2-width/8, height/2+height/8, 250*2, 75*2);
 
     //Check if cursor is over the button
     restart = checkMouseHoverAction_afterEnd(width/2-width/8, height/2+height/8, kinect_x_pos, kinect_y_pos, 350, 100);
@@ -251,9 +294,7 @@ void draw() {
 }
 
 
-
-void showStats(int s, int m, int h)
-{
+void showStats(int s, int m, int h) {
 
   background(255);
 
@@ -296,9 +337,9 @@ void showStats(int s, int m, int h)
 
   String formatStr = "%-25s %-15s";
 
-  write("id " + id_user);
-  write("início às " + h + ":" + m + ":" + s);
-  write("\n");
+  output.println("id " + id_user);
+  output.println("início às " + h + ":" + m + ":" + s);
+  output.println("\n");
   output.println(String.format(formatStr, "partículas vermelhas", (newUser.getColoursStatistics()[0])));
   output.println(String.format(formatStr, "partículas amarelas", (newUser.getColoursStatistics()[1])));
   output.println(String.format(formatStr, "partículas laranjas", (newUser.getColoursStatistics()[2])));
@@ -312,16 +353,10 @@ void showStats(int s, int m, int h)
   output.close();
 }
 
-void write(String str) {
-  output.println(str);
-}
 
-
-void checkMouseHoverAction(int rectXPos, int rectYpos, int xpos, int ypos, int rectWidth, int rectHeight)
-{
+void checkMouseHoverAction(int rectXPos, int rectYpos, int xpos, int ypos, int rectWidth, int rectHeight) {
   if (xpos >= rectXPos && xpos <= rectXPos+rectWidth && 
-    ypos >= rectYpos && ypos <= rectYpos+rectHeight && state == stateWaitBeforeProgram )
-  {
+    ypos >= rectYpos && ypos <= rectYpos+rectHeight && state == stateWaitBeforeProgram ) {
     state=stateNormalProgram;
     timer.start();             // Starting the timer
     timeClicked=millis();
@@ -329,11 +364,9 @@ void checkMouseHoverAction(int rectXPos, int rectYpos, int xpos, int ypos, int r
 }
 
 
-boolean checkMouseHoverAction_afterEnd(int rectXPos, int rectYpos, int xpos, int ypos, int rectWidth, int rectHeight)
-{
+boolean checkMouseHoverAction_afterEnd(int rectXPos, int rectYpos, int xpos, int ypos, int rectWidth, int rectHeight) {
   if (xpos >= rectXPos && xpos <= rectXPos+rectWidth && 
-    ypos >= rectYpos && ypos <= rectYpos+rectHeight && state == stateWaitAfterProgram )
-  {
+    ypos >= rectYpos && ypos <= rectYpos+rectHeight && state == stateWaitAfterProgram) {
     state=stateNormalProgram;
     timeClicked=millis();
     sendOsc(777);
@@ -344,16 +377,14 @@ boolean checkMouseHoverAction_afterEnd(int rectXPos, int rectYpos, int xpos, int
 
 // Kinect lib
 
-void drawPosition(SkeletonData _s) 
-{
+void drawPosition(SkeletonData _s) {
   noStroke();
   fill(0, 100, 255);
   String s1 = str(_s.dwTrackingID);
   text(s1, _s.position.x*width/2, _s.position.y*height/2);
 }
 
-void drawSkeleton(SkeletonData _s) 
-{
+void drawSkeleton(SkeletonData _s) {
   // Body
   DrawBone(_s, 
     Kinect.NUI_SKELETON_POSITION_HEAD, 
