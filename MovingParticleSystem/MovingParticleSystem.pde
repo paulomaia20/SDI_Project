@@ -57,7 +57,7 @@ color grey=color(129, 131, 135);
 
 color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 
-PImage screenImage;
+PShape screenImage;
 PShape [] arrayImages = new PShape[5];
 
 PShape button, button_restart; 
