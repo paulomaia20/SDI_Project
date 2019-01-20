@@ -39,7 +39,8 @@ int totalParticles,totalThunders,thunderCountdown;    // totalDrops
 PFont mono;
 //boolean caughtState=false; 
 //boolean touchedOnce=false;
-boolean restart=false; 
+boolean restart=false;
+boolean startgame=false; 
 boolean finish_game;
 
 int thunderNum1;
@@ -120,7 +121,6 @@ void setup() {
   showPlayButtonTimer = new Timer(0);  
   showPlayButtonTimer.start();
   noPlayTimer=new Timer(10000);
-  noPlayTimer.start(); 
   
   noCursor();   // Hide the cursor
   
@@ -154,25 +154,6 @@ void draw() {
   if (state == stateWaitBeforeProgram) {
     background(255);
     
-    // initial menu
-    
-    /* switch(idx_screenimage) {
-      case(0):
-         idx_screenimage = 1;
-       case(1):
-         idx_screenimage = 2;
-       case(2):
-         idx_screenimage = 3;
-       case(3):
-         idx_screenimage = 4;
-       case(4):
-        idx_screenimage = 0;
-
-     }*/ 
-     
-     //print(idx_screenimage); 
-
-
    if (idx_screenimage == 0) {
          idx_screenimage = 1;
     } else if (idx_screenimage == 1) {
@@ -185,9 +166,7 @@ void draw() {
          idx_screenimage = 0;
     }   
 
-  
-    //image(arrayImages[idx_screenimage], 0, 0, width, height);
-    shape(arrayImages[idx_screenimage], 0, 0, width, height);
+     shape(arrayImages[idx_screenimage], 0, 0, width, height);
 
     fill(255); 
     textAlign(CENTER);
@@ -198,11 +177,16 @@ void draw() {
     textAlign(CENTER, CENTER);
     text("Passa o cursor por cima do botão para iniciar o jogo.", width/2, height/2+300);
 
-    // Place button
-    shape(button, width/2-width/8, height/2, 250*2, 75*2);
+
     if (showPlayButtonTimer.isFinished()) {  
+          // Place button
+    shape(button, width/2-width/8, height/2, 250*2, 75*2);
       //Check if cursor is over the button
-      checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2); //Diria para começar o noPlayTimer aqui. Esta ação podia ser um booleano 
+     
+    startgame = checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2); //Diria para começar o noPlayTimer aqui. Esta ação podia ser um booleano
+      
+      if(startgame)
+          noPlayTimer.start(); 
       fill(color(128,128,128));
     }
 
@@ -409,13 +393,15 @@ void showStats(int s, int m, int h) {
 }
 
 
-void checkMouseHoverAction(int rectXPos, int rectYpos, int xpos, int ypos, int rectWidth, int rectHeight) {
+boolean checkMouseHoverAction(int rectXPos, int rectYpos, int xpos, int ypos, int rectWidth, int rectHeight) {
   if (xpos >= rectXPos && xpos <= rectXPos+rectWidth && 
     ypos >= rectYpos && ypos <= rectYpos+rectHeight && state == stateWaitBeforeProgram ) {
     state=stateNormalProgram;
     timer.start();             // Starting the timer
     timeClicked=millis();
+    return true;
   }
+  return false;
 }
 
 
