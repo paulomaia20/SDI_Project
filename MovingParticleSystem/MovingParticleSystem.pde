@@ -138,35 +138,40 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
-  /*if (bodies.size()!=0) {
+  if (bodies.size()!=0) {
     kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
     kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
     c.run(kinect_x_pos,kinect_y_pos);
-  }*/
+  }
   
   if (bodies.size()>=2)
       state=statePauseProgram; 
   
   // IF KINECT IS NOT ON
-  kinect_x_pos=mouseX;
-  kinect_y_pos=mouseY; 
+  //kinect_x_pos=mouseX;
+  //kinect_y_pos=mouseY; 
   
   if (state == stateWaitBeforeProgram) {
-    background(255);
-    
-   if (idx_screenimage == 0) {
-         idx_screenimage = 1;
-    } else if (idx_screenimage == 1) {
-         idx_screenimage = 2;
-    } else if (idx_screenimage == 2) {
-         idx_screenimage = 3;
-    } else if (idx_screenimage == 3) {
-         idx_screenimage = 4;
-    } else {
-         idx_screenimage = 0;
+    background(255);    
+    switch(idx_screenimage){
+      case 0:
+        idx_screenimage = 1;
+        break;
+      case 1:
+        idx_screenimage = 2;
+        break;
+      case 2:
+        idx_screenimage = 3;
+        break;
+      case 3:
+        idx_screenimage = 4;
+        break;
+      case 4:
+        idx_screenimage = 0;
+        break;
     }   
 
-     shape(arrayImages[idx_screenimage], 0, 0, width, height);
+    shape(arrayImages[idx_screenimage], 0, 0, width, height);
 
     fill(255); 
     textAlign(CENTER);
@@ -299,7 +304,7 @@ void draw() {
     c.run(kinect_x_pos,kinect_y_pos);
 
     // Place button
-    shape(button_restart, width/2-width/10, height/2+height/8, 370,100);
+    shape(button_restart, width/2-width/10, height/2+height/4, 370,100);
 
     //Check if cursor is over the button
     restart = checkMouseHoverAction_afterEnd(width/2-width/10, height/2+height/8, kinect_x_pos, kinect_y_pos, 370,100);
@@ -316,11 +321,16 @@ void draw() {
       state=stateWaitBeforeProgram;
       showPlayButtonTimer.setTime(3000);
       showPlayButtonTimer.start();
+      synchronized(bodies) {
+        for (int i=bodies.size() -1; i>=0; i--)
+        {     
+            bodies.remove(i);  
+        }
+      }
+      print(bodies.size());
     }
-  }
-  
-  else if (state == statePauseProgram)
-  
+  }  
+  else if (state == statePauseProgram)  
   {
   background(255); 
   textSize(30);
@@ -328,6 +338,8 @@ void draw() {
   textAlign(CENTER, CENTER);
   text("Apenas é permitido um jogador de cada vez.", width/2, height/2);
   text("Está a ser detetado mais do que um jogador. ", width/2, height/2-height/8);     
+  if (bodies.size()<2)
+    state=stateNormalProgram;
   }
   
 }
@@ -335,44 +347,59 @@ void draw() {
 
 void showStats(int s, int m, int h) {
 
-  background(255);
+  background(25,45,70);
 
-  textSize(50);
-  fill(0);
+  textSize(65);
+  fill(255, 250, 250);
   textAlign(CENTER, CENTER);
   text("O jogo terminou", width/2, height/12);
 
-  int xpos_particle_title=width/2-width/12; 
+  int xpos_particle_title=width/2-width/10; 
   int ypos_particle_title=height/2; 
-  int xpos_particle_title_amount=width/2+width/12;
+  int xpos_particle_title_amount=width/2+width/10;
   int ypos_particle_title_amount=height/2; 
 
   textAlign(LEFT, LEFT);
-  textSize(20);
-  text("Tempo de jogo (s):", xpos_particle_title, ypos_particle_title-140);
-  text(elapsed_time, xpos_particle_title_amount, ypos_particle_title_amount-140);
-
+  textSize(40);
+  text("Tempo de jogo (s):", xpos_particle_title, ypos_particle_title-300);
+  text(elapsed_time, xpos_particle_title_amount, ypos_particle_title_amount-300);
+  textSize(30);
   // Mostrar estatísticas do utilizador
-  text("Partículas vermelhas:", xpos_particle_title, ypos_particle_title);
-  text(newUser.getColoursStatistics()[0], xpos_particle_title_amount, ypos_particle_title_amount);
-
-  text("Partículas amarelas:", xpos_particle_title, ypos_particle_title-20);
-  text(newUser.getColoursStatistics()[1], xpos_particle_title_amount, ypos_particle_title_amount-20);
-
-  text("Partículas laranjas:", xpos_particle_title, ypos_particle_title-40);
-  text(newUser.getColoursStatistics()[2], xpos_particle_title_amount, ypos_particle_title_amount-40);
-
-  text("Partículas verdes:", xpos_particle_title, ypos_particle_title-60);
-  text(newUser.getColoursStatistics()[3], xpos_particle_title_amount, ypos_particle_title_amount-60);
-
-  text("Partículas azuis:", xpos_particle_title, ypos_particle_title-80);
-  text(newUser.getColoursStatistics()[4], xpos_particle_title_amount, ypos_particle_title_amount-80);
-
-  text("Partículas roxas:", xpos_particle_title, ypos_particle_title-100);
-  text(newUser.getColoursStatistics()[5], xpos_particle_title_amount, ypos_particle_title_amount-100);
-
-  text("Partículas cinzentas:", xpos_particle_title, ypos_particle_title-120);
-  text(newUser.getColoursStatistics()[6], xpos_particle_title_amount, ypos_particle_title_amount-120);
+  fill (245, 95 , 95);
+  rect(0,ypos_particle_title_amount+140, width ,60);
+  fill(0);
+  text("Partículas vermelhas:", xpos_particle_title, ypos_particle_title+180);
+  text(newUser.getColoursStatistics()[0], xpos_particle_title_amount, ypos_particle_title_amount+180);
+  fill (250, 160, 85);
+  rect(0,ypos_particle_title_amount+80, width ,60);
+  fill(0);
+  text("Partículas laranjas:", xpos_particle_title, ypos_particle_title+120);
+  text(newUser.getColoursStatistics()[2], xpos_particle_title_amount, ypos_particle_title_amount+120);  
+  fill (243, 207, 85);
+  rect(0,ypos_particle_title_amount+20, width,60);
+  fill(0);
+  text("Partículas amarelas:", xpos_particle_title, ypos_particle_title+60);
+  text(newUser.getColoursStatistics()[1], xpos_particle_title_amount, ypos_particle_title_amount+60);  
+  fill (136, 176, 75);
+  rect(0,ypos_particle_title_amount-40, width, 60);
+  fill(0);
+  text("Partículas verdes:", xpos_particle_title, ypos_particle_title-0);
+  text(newUser.getColoursStatistics()[3], xpos_particle_title_amount, ypos_particle_title_amount-0);
+  fill (14,180,195);
+  rect(0,ypos_particle_title_amount-100, width ,60);
+  fill(0);
+  text("Partículas azuis:", xpos_particle_title, ypos_particle_title-60);
+  text(newUser.getColoursStatistics()[4], xpos_particle_title_amount, ypos_particle_title_amount-60);
+  fill (173, 94, 153);
+  rect(0,ypos_particle_title_amount-160, width ,60);
+  fill(0);
+  text("Partículas roxas:", xpos_particle_title, ypos_particle_title-120);
+  text(newUser.getColoursStatistics()[5], xpos_particle_title_amount, ypos_particle_title_amount-120);
+  fill (129, 131, 135);
+  rect(0,ypos_particle_title_amount-220, width ,60);
+  fill(0);
+  text("Partículas cinzentas:", xpos_particle_title, ypos_particle_title-180);
+  text(newUser.getColoursStatistics()[6], xpos_particle_title_amount, ypos_particle_title_amount-180);
 
   String formatStr = "%-25s %-15s";
 
