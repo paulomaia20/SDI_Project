@@ -1,4 +1,4 @@
-import processing.video.*;  //<>//
+import processing.video.*;  //<>// //<>//
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
@@ -46,6 +46,8 @@ boolean finish_game;
 int thunderNum1;
 int thunderNum2;
 Thunder thunders;
+
+int thunderstorm;
 
 //==========Colors definition================
 color red=color(239, 51, 64);
@@ -130,6 +132,7 @@ void setup() {
   totalThunders=0;
   thunderCountdown=0;
   idx_screenimage=0; 
+  thunderstorm=8;
 }
 
 void draw() {  
@@ -148,8 +151,8 @@ void draw() {
       state=statePauseProgram; 
   
   // IF KINECT IS NOT ON
-  //kinect_x_pos=mouseX;
-  //kinect_y_pos=mouseY; 
+  kinect_x_pos=mouseX;
+  kinect_y_pos=mouseY; 
   
   if (state == stateWaitBeforeProgram) {
     background(255);    
@@ -207,21 +210,30 @@ void draw() {
     c.run(kinect_x_pos,kinect_y_pos);
     // Add more particles to the particle vector
     if (timer.isFinished()) {     
-      if (thunderCountdown==10) {
+      if (thunderCountdown==15) {
+        particles[totalParticles] = new Particle();
         int thunderX=(int) random(width);
         thunders = new Thunder(thunderX);
-        particles[totalParticles] = new Particle(thunders.index_colour);
-        // Increment totalParticles
         totalParticles ++ ; 
         timer.start();
         thunderCountdown=0;
         totalThunders ++; 
+        thunderstorm=0;
       } else {
-        particles[totalParticles] = new Particle();
-        // Increment totalParticles
-        totalParticles++; 
-        timer.start();
-        thunderCountdown++;
+        if (thunderstorm>7){
+          particles[totalParticles] = new Particle();
+          // Increment totalParticles
+          totalParticles++; 
+          timer.start();
+          thunderstorm++;
+        }
+        else{
+          particles[totalParticles]= new Particle(thunders.index_colour);
+          //timer.start();
+          totalParticles ++ ;
+          thunderstorm++;
+        }
+          thunderCountdown++;
       }
     }
        
