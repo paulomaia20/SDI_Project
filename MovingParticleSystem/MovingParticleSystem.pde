@@ -59,6 +59,8 @@ color purple=color(173, 94, 153);
 color grey=color(129, 131, 135);
 
 int savemycolour;
+int max_colour;
+int max_colour_index;
 
 color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 
@@ -111,12 +113,7 @@ void setup() {
   button = loadShape("button.svg");
   button_restart = loadShape("restart_game_button.svg");
   
-  testimg= loadShape("rain01.svg");
-
-
-  // create a file in the sketch directory
-  int d = day();  // Values from 1 - 31
-  output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
+  testimg = loadShape("rain01.svg");
 
   particles = new Particle[TOTAL_PARTICLE];  // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
   timer = new Timer(600);  // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
@@ -138,11 +135,15 @@ void setup() {
 }
 
 void draw() {  
-
+  
+  // create a file in the sketch directory
+  int d = day();     // Values from 1 - 31
+  output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
+  
   int s = second();  // Values from 0 - 59
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
-
+  
   if (bodies.size()!=0) {
     kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
     kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
@@ -267,26 +268,30 @@ void draw() {
         if (c.intersect(particles[i])) {
           particles[i].setCaughtState(true);
           
+          max_colour = max(newUser.getColoursStatistics());
+          for (int j = 0; j < newUser.getColoursStatistics().length; j++) {         
+            if (newUser.getColoursStatistics()[j] == max_colour) { max_colour_index = j; }
+          }
+          
+          fill(vectorColours[max_colour_index]);
+          
           // fill body parts with colours   
-          switch(particles[i].index_colour) {
+          switch(max_colour_index) {
             case 0: // red
             case 1: // yellow
             case 2: // orange
             case 5: // purple
               arrayShapes[3].disableStyle(); // body
-              fill(vectorColours[particles[i].index_colour]);
               noStroke();
               shape(arrayShapes[3], width-width/12, height-height/5, width/10, height/5);
               break;
             case 4: // blue
             case 6: // grey
               arrayShapes[1].disableStyle(); // head
-              fill(vectorColours[particles[i].index_colour]);
               noStroke();
               shape(arrayShapes[1], width-width/12, height-height/5, width/10, height/5);
               break;
             case 3: // green
-              fill(vectorColours[particles[i].index_colour]);
               arrayShapes[2].disableStyle(); // limbs
               noStroke();
               shape(arrayShapes[2], width-width/12, height-height/5, width/10, height/5);
@@ -302,7 +307,7 @@ void draw() {
               arrayShapes[6].disableStyle();
               noStroke();
               shape(arrayShapes[6], width-width/12, height-height/5, width/10, height/5);
-          }  
+          }
         }
       }
     }
