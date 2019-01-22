@@ -1,4 +1,15 @@
 class Thunder {
+    //==========Colors definition================
+  color red=color(239, 51, 64);
+  color yellow=color(243, 207, 85);
+  color orange=color(255, 108, 47);
+  color green=color(136, 176, 75);
+  color blue=color(87, 140, 169);
+  color purple=color(173, 94, 153);
+  color grey=color(129, 131, 135);
+
+  color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
+  color filling;
   
   int index_colour;
   int xpos; 
@@ -34,10 +45,11 @@ class Thunder {
 
   // Method to display
   void display() {
-
-     strokeWeight(3); //bolt is a little thicker than a line
-     stroke(0); 
-     fill(255); //Falta mudar para a cor da partícula 
+     filling=vectorColours[index_colour];
+     fill(filling); //Falta mudar para a cor da partícula 
+     strokeWeight(6); //bolt is a little thicker than a line
+     stroke(filling); 
+     
      
      while(ypos<height){//to bottom of screen
      endX = xpos + int(random(-4,4)); //x-value varies

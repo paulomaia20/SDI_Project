@@ -58,6 +58,8 @@ color blue=color(87, 140, 169);
 color purple=color(173, 94, 153);
 color grey=color(129, 131, 135);
 
+int savemycolour;
+
 color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 
 PShape screenImage;
@@ -212,8 +214,9 @@ void draw() {
     if (timer.isFinished()) {     
       if (thunderCountdown==15) {
         particles[totalParticles] = new Particle();
-        int thunderX=(int) random(width);
+        int thunderX=(int) random(width/4, 3*width/4);
         thunders = new Thunder(thunderX);
+        savemycolour=thunders.index_colour;
         totalParticles ++ ; 
         timer.start();
         thunderCountdown=0;
@@ -228,7 +231,8 @@ void draw() {
           thunderstorm++;
         }
         else{
-          particles[totalParticles]= new Particle(thunders.index_colour);
+          particles[totalParticles]= new Particle(savemycolour);
+          print(savemycolour);
           //timer.start();
           totalParticles ++ ;
           thunderstorm++;
@@ -253,7 +257,6 @@ void draw() {
         particles[i].display();
         if (particles[i].getCaughtState()==true) {
           particles[i].updateOpacity();        
-          
           if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce())) {
             particles[i].caught();
             noPlayTimer.start();
