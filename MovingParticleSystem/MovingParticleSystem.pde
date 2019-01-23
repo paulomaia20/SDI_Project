@@ -38,8 +38,8 @@ Particle[] particles;
 Timer timer, noPlayTimer, showPlayButtonTimer;        // One timer object
 int totalParticles,totalThunders,thunderCountdown;    // totalDrops
 PFont mono;
-//boolean caughtState=false; 
-//boolean touchedOnce=false;
+boolean caughtState=false; 
+boolean touchedOnce=false;
 boolean restart=false;
 boolean startgame=false; 
 boolean finish_game;
@@ -60,8 +60,6 @@ color purple=color(173, 94, 153);
 color grey=color(129, 131, 135);
 
 int savemycolour;
-int max_colour;
-int max_colour_index;
 
 color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 
@@ -72,7 +70,6 @@ PShape button, button_restart;
 PShape [] arrayShapes = new PShape[7];
 int idx_screenimage; 
 
-PShape testimg; 
 
 void setup() {
     
@@ -114,8 +111,6 @@ void setup() {
   button = loadShape("button.svg");
   button_restart = loadShape("restart_game_button.svg");
   
-  testimg = loadShape("rain01.svg");
-
   particles = new Particle[TOTAL_PARTICLE];  // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
   timer = new Timer(600);  // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
 
@@ -144,7 +139,6 @@ void draw() {
   int s = second();  // Values from 0 - 59
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
-
   
   /*if (bodies.size()!=0) {
 
@@ -191,7 +185,6 @@ void draw() {
     textAlign(CENTER, CENTER);
     text("Passa o cursor por cima do botão para iniciar o jogo.", width/2, height/2+300);
 
-
     if (showPlayButtonTimer.isFinished()) {  
           // Place button
     shape(button, width/2-width/8, height/2, 250*2, 75*2);
@@ -218,7 +211,7 @@ void draw() {
     
     noStroke();
     shape(arrayShapes[0], width-width/12, height-height/5, width/10, height/5); 
-    int maximum =max(newUser.coloursStatistics);
+    int maximum = max(newUser.coloursStatistics);
     int max_index=0;
     for (int i=0; i<7; i++){
       if(newUser.coloursStatistics[i]==maximum)
@@ -324,48 +317,6 @@ void draw() {
         }
         if (c.intersect(particles[i])) {
           particles[i].setCaughtState(true);      
-
-          max_colour = max(newUser.getColoursStatistics());
-          for (int j = 0; j < newUser.getColoursStatistics().length; j++) {         
-            if (newUser.getColoursStatistics()[j] == max_colour) { max_colour_index = j; }
-          }
-          
-          fill(vectorColours[max_colour_index]);
-          
-          // fill body parts with colours   
-          switch(max_colour_index) {
-            case 0: // red
-            case 1: // yellow
-            case 2: // orange
-            case 5: // purple
-              arrayShapes[3].disableStyle(); // body
-              noStroke();
-              shape(arrayShapes[3], width-width/12, height-height/5, width/10, height/5);
-              break;
-            case 4: // blue
-            case 6: // grey
-              arrayShapes[1].disableStyle(); // head
-              noStroke();
-              shape(arrayShapes[1], width-width/12, height-height/5, width/10, height/5);
-              break;
-            case 3: // green
-              arrayShapes[2].disableStyle(); // limbs
-              noStroke();
-              shape(arrayShapes[2], width-width/12, height-height/5, width/10, height/5);
-                  
-              arrayShapes[4].disableStyle();
-              noStroke();
-              shape(arrayShapes[4], width-width/12, height-height/5, width/10, height/5);
-              
-              arrayShapes[5].disableStyle();
-              noStroke();
-              shape(arrayShapes[5], width-width/12, height-height/5, width/10, height/5);
-                  
-              arrayShapes[6].disableStyle();
-              noStroke();
-              shape(arrayShapes[6], width-width/12, height-height/5, width/10, height/5);
-          }
-
         }
       }
     }
@@ -419,7 +370,6 @@ void draw() {
   if (bodies.size()<2)
     state=stateNormalProgram;
   }
-  
 }
 
 
