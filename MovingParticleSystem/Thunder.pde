@@ -64,8 +64,7 @@ class Thunder {
          stroke(129,131,135);
          fill(129,131,135);
          break;
-     }
-     
+     }     
      while(ypos<height){//to bottom of screen
      endX = xpos + int(random(-4,4)); //x-value varies
      endY = ypos + 1;    //y just goes up

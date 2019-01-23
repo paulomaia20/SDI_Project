@@ -274,9 +274,7 @@ void draw() {
         thunderCountdown++;
       }
     }
-       
-    //println(totalParticles);
-    //}
+     
     if (totalParticles>=TOTAL_PARTICLE)
       finish_game=true;
     
