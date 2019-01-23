@@ -63,7 +63,6 @@ int savemycolour;
 
 color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 
-PShape screenImage;
 PShape [] arrayImages = new PShape[5];
 
 PShape button, button_restart; 
@@ -105,7 +104,6 @@ void setup() {
   c = new Cursor(RADIUS); //Cursor with radius RADIUS
 
   frameRate(300);
-  //smooth();
   
   //Load button for main menu
   button = loadShape("button.svg");
@@ -186,12 +184,12 @@ void draw() {
     text("Passa o cursor por cima do botão para iniciar o jogo.", width/2, height/2+300);
 
     if (showPlayButtonTimer.isFinished()) {  
-          // Place button
-    shape(button, width/2-width/8, height/2, 250*2, 75*2);
+      // Place button
+      shape(button, width/2-width/8, height/2, 250*2, 75*2);
+        
       //Check if cursor is over the button
-     
-    startgame = checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2); //Diria para começar o noPlayTimer aqui. Esta ação podia ser um booleano
-      
+      startgame = checkMouseHoverAction(width/2-width/8, height/2, kinect_x_pos, kinect_y_pos, 250*2, 75*2);
+        
       if(startgame)
           noPlayTimer.start(); 
       fill(color(128,128,128));
@@ -615,4 +613,4 @@ void sendOsc(int particle_color) {
   OscMessage msg = new OscMessage("/inputs");
   msg.add((float)particle_color); 
   oscP5.send(msg, dest);
-    }
+}
