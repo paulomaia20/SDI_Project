@@ -258,9 +258,11 @@ void draw() {
       if (thunderCountdown==10) {
         int thunderX=(int) random(width);
         thunders = new Thunder(thunderX);
-        particles[totalParticles] = new Particle(thunders.index_colour);
-        // Increment totalParticles
-        totalParticles ++ ; 
+        for (int c=0; c<10; c++){
+          particles[totalParticles] = new Particle(thunders.index_colour);
+          // Increment totalParticles
+          totalParticles ++ ;          
+        } 
         timer.start();
         thunderCountdown=0;
         totalThunders ++; 

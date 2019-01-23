@@ -34,10 +34,37 @@ class Thunder {
 
   // Method to display
   void display() {
-
-     strokeWeight(3); //bolt is a little thicker than a line
-     stroke(0); 
-     fill(255); //Falta mudar para a cor da partícula 
+     strokeWeight(3); //bolt is a little thicker than a line     
+     switch(index_colour){
+       case 0:
+         stroke(239, 51, 64); 
+         fill(239, 51, 64);
+         break;
+       case 1:
+         stroke(243, 207, 85);
+         fill(243,207,85);
+         break;
+       case 2:
+         stroke(255,108,47);
+         fill(255,108,47);
+         break;
+       case 3:
+         stroke(136,176,75);
+         fill(136,176,75);
+         break;
+       case 4:
+         stroke(87,140,169);
+         fill(87,140,169);
+         break;
+       case 5:
+         stroke(173,94,153);
+         fill(173,94,153);
+         break;
+       case 6:
+         stroke(129,131,135);
+         fill(129,131,135);
+         break;
+     }
      
      while(ypos<height){//to bottom of screen
      endX = xpos + int(random(-4,4)); //x-value varies
