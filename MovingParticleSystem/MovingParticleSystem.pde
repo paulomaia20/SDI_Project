@@ -29,6 +29,7 @@ final int TOTAL_PARTICLE=100;
 //User variables
 User newUser;
 int id_user=1;
+int total_caught=0;
 
 //Others 
 bouncyWord title;
@@ -201,6 +202,12 @@ void draw() {
     
     background(255);
     
+    //Add Score to the corner
+    textSize(30);
+    fill(0);
+    text("Score:", width-150,20);
+    text(str(total_caught), width-40, 20);
+    
     noStroke();
     shape(arrayShapes[0], width-width/12, height-height/5, width/10, height/5); 
     int maximum =max(newUser.coloursStatistics);
@@ -287,7 +294,8 @@ void draw() {
             particles[i].caught();
             noPlayTimer.start();
             (newUser.getColoursStatistics())[particles[i].index_colour]++;
-            sendOsc(particles[i].index_colour);            
+            sendOsc(particles[i].index_colour);     
+            total_caught++;
           }
         }
         if (c.intersect(particles[i])) {
