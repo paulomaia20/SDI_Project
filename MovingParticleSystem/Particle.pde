@@ -1,4 +1,4 @@
-// Simple Particle System //<>// //<>// //<>//
+// Simple Particle System //<>// //<>// //<>// //<>//
 /*              R    G    B
  [0] red       239  51   64
  [1] yellow    243  207  85
@@ -49,12 +49,13 @@ class Particle {
     touchedOnce=false;
   }
   
-    Particle(int index_colour) {
+ Particle(int index_colour) {
 
     r = 12;                   // All raindrops are the same size
     x = random(width);       // Start with a random x location
     y = -r*4;                // Start a little above the window
     speed = random(1, 10);    // Pick a random speed
+    this.index_colour=index_colour;
     filling=vectorColours[index_colour];
     opacity=255;
     touchedOnce=false;

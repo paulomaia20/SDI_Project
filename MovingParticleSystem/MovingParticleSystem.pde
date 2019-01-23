@@ -1,4 +1,4 @@
-import processing.video.*;  //<>//
+import processing.video.*;  //<>// //<>//
 import java.awt.Rectangle;
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
@@ -48,6 +48,8 @@ int thunderNum1;
 int thunderNum2;
 Thunder thunders;
 
+int thunderstorm;
+
 //==========Colors definition================
 color red=color(239, 51, 64);
 color yellow=color(243, 207, 85);
@@ -56,6 +58,10 @@ color green=color(136, 176, 75);
 color blue=color(87, 140, 169);
 color purple=color(173, 94, 153);
 color grey=color(129, 131, 135);
+
+int savemycolour;
+int max_colour;
+int max_colour_index;
 
 color [] vectorColours = {red, yellow, orange, green, blue, purple, grey};
 
@@ -108,12 +114,7 @@ void setup() {
   button = loadShape("button.svg");
   button_restart = loadShape("restart_game_button.svg");
   
-  testimg= loadShape("rain01.svg");
-
-
-  // create a file in the sketch directory
-  int d = day();  // Values from 1 - 31
-  output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
+  testimg = loadShape("rain01.svg");
 
   particles = new Particle[TOTAL_PARTICLE];  // Create 50 spots in the array - Variar de acordo com o que decidirmos. Tem de ter um máximo de particulas, funçao do tempo da simulação
   timer = new Timer(600);  // Create a timer that goes off every X milliseconds. Number of particles is a function of the timer. 
@@ -131,15 +132,22 @@ void setup() {
   totalThunders=0;
   thunderCountdown=0;
   idx_screenimage=0; 
+  thunderstorm=8;
 }
 
 void draw() {  
-
+  
+  // create a file in the sketch directory
+  int d = day();     // Values from 1 - 31
+  output = createWriter("statistics_user" + id_user + "_day" + d + ".txt");
+  
   int s = second();  // Values from 0 - 59
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
+  
   /*if (bodies.size()!=0) {
+
     kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
     kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
     c.run(kinect_x_pos,kinect_y_pos);
@@ -255,23 +263,40 @@ void draw() {
     c.run(kinect_x_pos,kinect_y_pos);
     // Add more particles to the particle vector
     if (timer.isFinished()) {     
-      if (thunderCountdown==10) {
-        int thunderX=(int) random(width);
+      if (thunderCountdown==15) {
+        particles[totalParticles] = new Particle();
+        int thunderX=(int) random(width/4, 3*width/4);
         thunders = new Thunder(thunderX);
+
         for (int c=0; c<10; c++){
           particles[totalParticles] = new Particle(thunders.index_colour);
           // Increment totalParticles
           totalParticles ++ ;          
         } 
+
+        savemycolour=thunders.index_colour;
+        totalParticles ++ ; 
+
         timer.start();
         thunderCountdown=0;
         totalThunders ++; 
+        thunderstorm=0;
       } else {
-        particles[totalParticles] = new Particle();
-        // Increment totalParticles
-        totalParticles++; 
-        timer.start();
-        thunderCountdown++;
+        if (thunderstorm>7){
+          particles[totalParticles] = new Particle();
+          // Increment totalParticles
+          totalParticles++; 
+          timer.start();
+          thunderstorm++;
+        }
+        else{
+          particles[totalParticles]= new Particle(savemycolour);
+          print(savemycolour);
+          //timer.start();
+          totalParticles ++ ;
+          thunderstorm++;
+        }
+          thunderCountdown++;
       }
     }
      
@@ -289,7 +314,6 @@ void draw() {
         particles[i].display();
         if (particles[i].getCaughtState()==true) {
           particles[i].updateOpacity();        
-          
           if ((particles[i].getOpacity()<=50) && (!particles[i].getTouchedOnce())) {
             particles[i].caught();
             noPlayTimer.start();
@@ -300,7 +324,48 @@ void draw() {
         }
         if (c.intersect(particles[i])) {
           particles[i].setCaughtState(true);      
+
+          max_colour = max(newUser.getColoursStatistics());
+          for (int j = 0; j < newUser.getColoursStatistics().length; j++) {         
+            if (newUser.getColoursStatistics()[j] == max_colour) { max_colour_index = j; }
+          }
           
+          fill(vectorColours[max_colour_index]);
+          
+          // fill body parts with colours   
+          switch(max_colour_index) {
+            case 0: // red
+            case 1: // yellow
+            case 2: // orange
+            case 5: // purple
+              arrayShapes[3].disableStyle(); // body
+              noStroke();
+              shape(arrayShapes[3], width-width/12, height-height/5, width/10, height/5);
+              break;
+            case 4: // blue
+            case 6: // grey
+              arrayShapes[1].disableStyle(); // head
+              noStroke();
+              shape(arrayShapes[1], width-width/12, height-height/5, width/10, height/5);
+              break;
+            case 3: // green
+              arrayShapes[2].disableStyle(); // limbs
+              noStroke();
+              shape(arrayShapes[2], width-width/12, height-height/5, width/10, height/5);
+                  
+              arrayShapes[4].disableStyle();
+              noStroke();
+              shape(arrayShapes[4], width-width/12, height-height/5, width/10, height/5);
+              
+              arrayShapes[5].disableStyle();
+              noStroke();
+              shape(arrayShapes[5], width-width/12, height-height/5, width/10, height/5);
+                  
+              arrayShapes[6].disableStyle();
+              noStroke();
+              shape(arrayShapes[6], width-width/12, height-height/5, width/10, height/5);
+          }
+
         }
       }
     }
@@ -636,4 +701,4 @@ void sendOsc(int particle_color) {
             }
     }
   }
-} */ 
+} */
