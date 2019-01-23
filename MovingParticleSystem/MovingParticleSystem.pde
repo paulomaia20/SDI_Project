@@ -260,16 +260,8 @@ void draw() {
         particles[totalParticles] = new Particle();
         int thunderX=(int) random(width/4, 3*width/4);
         thunders = new Thunder(thunderX);
-
-        for (int c=0; c<10; c++){
-          particles[totalParticles] = new Particle(thunders.index_colour);
-          // Increment totalParticles
-          totalParticles ++ ;          
-        } 
-
         savemycolour=thunders.index_colour;
         totalParticles ++ ; 
-
         timer.start();
         thunderCountdown=0;
         totalThunders ++; 
@@ -284,7 +276,6 @@ void draw() {
         }
         else{
           particles[totalParticles]= new Particle(savemycolour);
-          print(savemycolour);
           //timer.start();
           totalParticles ++ ;
           thunderstorm++;
@@ -324,7 +315,6 @@ void draw() {
     if (noPlayTimer.isFinished() || finish_game) {
       state=stateWaitAfterProgram;
       elapsed_time=(millis()-timeClicked)/1000;
-      println("Acabou");
     }
     
   } else if (state == stateWaitAfterProgram) {
@@ -344,6 +334,7 @@ void draw() {
       id_user++; 
       newUser = new User(id_user); 
       totalParticles = 0;
+      total_caught=0; 
       noPlayTimer=new Timer(10000); //timer to count the time since the last time the user caught one drop      
       noPlayTimer.start(); 
       finish_game=false;
@@ -619,36 +610,3 @@ void sendOsc(int particle_color) {
   msg.add((float)particle_color); 
   oscP5.send(msg, dest);
     }
-
-/*void thunder1(int depth, int x){
-  int index_colour=int(random(0, 7));    
-  color filling=vectorColours[index_colour];  
-  print(depth);
-  if (depth < 10) {
-          print("inside depth<10");
-
-    strokeWeight(2);//bolt is a little thicker than a line
-    stroke(filling); 
-    line(0,0,0,height/10); // draw a line going down
-    {
-      translate(0,height/10); // move the space downwards
-      rotate(random(-0.5,0.5));  // random wiggle
- 
-      if (random(1.0) < 0.1){ // &nbsp;ing  
-      print("inside random");
-        rotate(0.3); // rotate to the right
-        scale(0.4); // scale down
-        pushMatrix(); // now save the transform state
-        thunder(depth + 1); // start a new branch!
-        popMatrix(); // go back to saved state
-        rotate(-0.6); // rotate back to the left
-        pushMatrix(); // save state
-        thunder(depth + 2);   // start a second new branch
-        popMatrix(); // back to saved state        
-     }
-      else { // no branch - continue at the same depth  
-        thunder(depth);
-            }
-    }
-  }
-} */
