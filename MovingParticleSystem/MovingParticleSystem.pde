@@ -138,18 +138,18 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
 
-  if (bodies.size()!=0) {
+  /*if (bodies.size()!=0) {
     kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
     kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
     c.run(kinect_x_pos,kinect_y_pos);
-  }
+  }*/
   
   if (bodies.size()>=2)
       state=statePauseProgram; 
   
   // IF KINECT IS NOT ON
-  //kinect_x_pos=mouseX;
-  //kinect_y_pos=mouseY; 
+  kinect_x_pos=mouseX;
+  kinect_y_pos=mouseY; 
   
   if (state == stateWaitBeforeProgram) {
     background(255);    
@@ -203,7 +203,48 @@ void draw() {
     
     noStroke();
     shape(arrayShapes[0], width-width/12, height-height/5, width/10, height/5); 
-    
+    int maximum =max(newUser.coloursStatistics);
+    int max_index=0;
+    for (int i=0; i<7; i++){
+      if(newUser.coloursStatistics[i]==maximum)
+        max_index=i;
+    } 
+    if(maximum!=0){
+      switch(max_index){
+        case 0: // red
+        case 1: // yellow
+        case 2: // orange
+        case 5: // purple
+          arrayShapes[3].disableStyle(); // body
+          fill(vectorColours[max_index]);
+          noStroke();
+          shape(arrayShapes[3], width-width/12, height-height/5, width/10, height/5);
+          break;
+        case 4: // blue
+        case 6: // grey
+          arrayShapes[1].disableStyle(); // head
+          fill(vectorColours[max_index]);
+          noStroke();
+          shape(arrayShapes[1], width-width/12, height-height/5, width/10, height/5);
+          break;
+        case 3: // green
+          fill(vectorColours[max_index]);
+          arrayShapes[2].disableStyle(); // limbs
+          noStroke();
+          shape(arrayShapes[2], width-width/12, height-height/5, width/10, height/5);                  
+          arrayShapes[4].disableStyle();
+          noStroke();
+          shape(arrayShapes[4], width-width/12, height-height/5, width/10, height/5);
+          arrayShapes[5].disableStyle();
+          noStroke();
+          shape(arrayShapes[5], width-width/12, height-height/5, width/10, height/5);                  
+          arrayShapes[6].disableStyle();
+          noStroke();
+          shape(arrayShapes[6], width-width/12, height-height/5, width/10, height/5);
+          break;
+      }  
+    } 
+   
     c.run(kinect_x_pos,kinect_y_pos);
     // Add more particles to the particle vector
     if (timer.isFinished()) {     
@@ -250,44 +291,8 @@ void draw() {
           }
         }
         if (c.intersect(particles[i])) {
-          particles[i].setCaughtState(true);
+          particles[i].setCaughtState(true);      
           
-          // fill body parts with colours   
-          switch(particles[i].index_colour) {
-            case 0: // red
-            case 1: // yellow
-            case 2: // orange
-            case 5: // purple
-              arrayShapes[3].disableStyle(); // body
-              fill(vectorColours[particles[i].index_colour]);
-              noStroke();
-              shape(arrayShapes[3], width-width/12, height-height/5, width/10, height/5);
-              break;
-            case 4: // blue
-            case 6: // grey
-              arrayShapes[1].disableStyle(); // head
-              fill(vectorColours[particles[i].index_colour]);
-              noStroke();
-              shape(arrayShapes[1], width-width/12, height-height/5, width/10, height/5);
-              break;
-            case 3: // green
-              fill(vectorColours[particles[i].index_colour]);
-              arrayShapes[2].disableStyle(); // limbs
-              noStroke();
-              shape(arrayShapes[2], width-width/12, height-height/5, width/10, height/5);
-                  
-              arrayShapes[4].disableStyle();
-              noStroke();
-              shape(arrayShapes[4], width-width/12, height-height/5, width/10, height/5);
-              
-              arrayShapes[5].disableStyle();
-              noStroke();
-              shape(arrayShapes[5], width-width/12, height-height/5, width/10, height/5);
-                  
-              arrayShapes[6].disableStyle();
-              noStroke();
-              shape(arrayShapes[6], width-width/12, height-height/5, width/10, height/5);
-          }  
         }
       }
     }
