@@ -140,19 +140,19 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
   
-  /*if (bodies.size()!=0) {
-
-    kinect_x_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
-    kinect_y_pos=int(bodies.get(0).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
+  print(bodies.size()); 
+  if (bodies.size()!=0) {
+    kinect_x_pos=int(bodies.get(bodies.size()-1).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
+    kinect_y_pos=int(bodies.get(bodies.size()-1).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
     c.run(kinect_x_pos,kinect_y_pos);
-  }*/
+  }
   
   if (bodies.size()>=2)
       state=statePauseProgram; 
   
   // IF KINECT IS NOT ON
-  kinect_x_pos=mouseX;
-  kinect_y_pos=mouseY; 
+//  kinect_x_pos=mouseX;
+  //kinect_y_pos=mouseY; 
   
   if (state == stateWaitBeforeProgram) {
     background(255);    
@@ -341,14 +341,14 @@ void draw() {
       state=stateWaitBeforeProgram;
       showPlayButtonTimer.setTime(3000);
       showPlayButtonTimer.start();
-      synchronized(bodies) {
-        for (int i=bodies.size() -1; i>=0; i--)
-        {     
-            bodies.remove(i);  
-        }
-      }
-      print(bodies.size());
-    }
+
+      //synchronized(bodies) {
+      //  for (int i=bodies.size() -1; i>=0; i--)
+      //  {     
+      //      bodies.remove(i);  
+      //  }
+     // }  
+    }  
   }  
   else if (state == statePauseProgram)  
   {
@@ -436,6 +436,12 @@ void showStats(int s, int m, int h) {
   // finish writing data to the file
   output.flush();  
   output.close();
+}
+
+void removeBodiesCheckPos() {
+  
+ 
+  
 }
 
 
@@ -579,7 +585,7 @@ void disappearEvent(SkeletonData _s)
   synchronized(bodies) {
     for (int i=bodies.size ()-1; i>=0; i--) 
     {
-      if (_s.dwTrackingID == bodies.get(i).dwTrackingID) 
+      if (bodies.get(i).dwTrackingID == 0) 
       {
         bodies.remove(i);
       }

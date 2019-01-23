@@ -46,7 +46,7 @@ class Thunder {
   // Method to display
   void display() {
 
-     strokeWeight(3); //bolt is a little thicker than a line     
+   /*  strokeWeight(3); //bolt is a little thicker than a line     
      switch(index_colour){
        case 0:
          stroke(239, 51, 64); 
@@ -76,7 +76,7 @@ class Thunder {
          stroke(129,131,135);
          fill(129,131,135);
          break;
-     }     
+     }     */ 
 
      filling=vectorColours[index_colour];
      fill(filling); //Falta mudar para a cor da partícula 

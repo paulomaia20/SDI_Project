@@ -1,0 +1,11 @@
+id 3
+início às 21:39:51
+
+
+partículas vermelhas      0              
+partículas amarelas       0              
+partículas laranjas       0              
+partículas verdes         0              
+partículas azuis          0              
+partículas roxas          0              
+partículas cinzentas      0              
