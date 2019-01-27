@@ -1,5 +1,4 @@
-import processing.video.*;  //<>// //<>//
-import java.awt.Rectangle;
+import java.awt.Rectangle; //<>//
 import kinect4WinSDK.Kinect;
 import kinect4WinSDK.SkeletonData;
 import oscP5.*;
@@ -24,7 +23,7 @@ Cursor c;
 ArrayList <SkeletonData> bodies;
 int kinect_x_pos, kinect_y_pos;
 
-final int TOTAL_PARTICLE=100;
+final int TOTAL_PARTICLE=200;
 
 //User variables
 User newUser;
@@ -138,19 +137,23 @@ void draw() {
   int m = minute();  // Values from 0 - 59
   int h = hour();    // Values from 0 - 23
   
-  print(bodies.size()); 
+   if (totalParticles>=TOTAL_PARTICLE)
+      finish_game=true;
+     
+  
+ // print(bodies.size()); 
   if (bodies.size()!=0) {
-    kinect_x_pos=int(bodies.get(bodies.size()-1).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*width);
-    kinect_y_pos=int(bodies.get(bodies.size()-1).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*height);
+    kinect_x_pos=int(bodies.get(bodies.size()-1).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].x*1.4*width);
+    kinect_y_pos=int(bodies.get(bodies.size()-1).skeletonPositions[Kinect.NUI_SKELETON_POSITION_HAND_RIGHT].y*1.4*height);
     c.run(kinect_x_pos,kinect_y_pos);
-  }
+  }  
   
   if (bodies.size()>=2)
       state=statePauseProgram; 
   
   // IF KINECT IS NOT ON
-//  kinect_x_pos=mouseX;
-  //kinect_y_pos=mouseY; 
+ // kinect_x_pos=mouseX;
+ // kinect_y_pos=mouseY; 
   
   if (state == stateWaitBeforeProgram) {
     background(255);    
@@ -200,6 +203,11 @@ void draw() {
   } else if (state == stateNormalProgram) {
     
     background(255);
+    
+       if (noPlayTimer.isFinished() || finish_game) {
+      state=stateWaitAfterProgram;
+      elapsed_time=(millis()-timeClicked)/1000;
+    }
     
     //Add Score to the corner
     textSize(30);
@@ -281,9 +289,7 @@ void draw() {
           thunderCountdown++;
       }
     }
-     
-    if (totalParticles>=TOTAL_PARTICLE)
-      finish_game=true;
+    
     
     // Move and display all drops
     if (!finish_game) {
@@ -309,11 +315,7 @@ void draw() {
         }
       }
     }
-    
-    if (noPlayTimer.isFinished() || finish_game) {
-      state=stateWaitAfterProgram;
-      elapsed_time=(millis()-timeClicked)/1000;
-    }
+   
     
   } else if (state == stateWaitAfterProgram) {
     
