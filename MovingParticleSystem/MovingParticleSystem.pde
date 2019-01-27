@@ -23,7 +23,7 @@ Cursor c;
 ArrayList <SkeletonData> bodies;
 int kinect_x_pos, kinect_y_pos;
 
-final int TOTAL_PARTICLE=200;
+final int TOTAL_PARTICLE=100;
 
 //User variables
 User newUser;
